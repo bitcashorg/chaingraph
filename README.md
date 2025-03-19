@@ -2,6 +2,8 @@
 
 ChainGraph is a real-time GraphQL toolkit designed for EOSIO/Antelope blockchain applications. It offers powerful tools for data subscriptions and querying across multiple blockchains.
 
+> 🚧 Note: Migration from previous repos in progress (80% complete) - feel free to explore and contribute! 🏗️
+
 ## Project Structure
 
 ### Apps
