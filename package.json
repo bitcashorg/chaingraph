@@ -3,7 +3,6 @@
   "private": true,
   "scripts": {
     "build": "turbo run build",
-    "backend": "bash scripts/backend.sh",
     "dev": "turbo dev",
     "check-types": "turbo check-types",
     "lint": "biome check .",
