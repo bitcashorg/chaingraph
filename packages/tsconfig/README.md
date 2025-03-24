@@ -1,4 +1,4 @@
-# @repo/tsconfig package
+# @chaingraph/tsconfig package
 
 This package contains shared TypeScript configurations used across the monorepo.
 
@@ -41,7 +41,7 @@ Reference these configs in your `tsconfig.json`:
 
 ```json
 {
-  "extends": "@repo/tsconfig/base.json"
+  "extends": "@chaingraph/tsconfig/base.json"
 }
 ```
 
@@ -49,18 +49,18 @@ For specific project types, use their respective configs:
 
 ```json
 {
-  "extends": "@repo/tsconfig/node.json"  // For Node.js projects
+  "extends": "@chaingraph/tsconfig/node.json"  // For Node.js projects
 }
 ```
 
 ```json
 {
-  "extends": "@repo/tsconfig/nextjs.json"  // For Next.js projects
+  "extends": "@chaingraph/tsconfig/nextjs.json"  // For Next.js projects
 }
 ```
 
 ```json
 {
-  "extends": "@repo/tsconfig/react-library.json"  // For React libraries
+  "extends": "@chaingraph/tsconfig/react-library.json"  // For React libraries
 }
 ```

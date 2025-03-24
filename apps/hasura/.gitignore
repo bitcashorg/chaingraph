@@ -1,0 +1,8 @@
+.history
+
+*.log
+.DS_Store
+
+.env
+!.env.example
+.ssh

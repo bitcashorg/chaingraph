@@ -2,6 +2,8 @@
 
 ChainGraph provides performant GraphQL APIs for blockchain applications featuring state of art subscriptions, advanced filtering, sorting, pagination and aggregations across multiple blockchains.
 
+> 🚧 Note: This project is in active development - feel free to explore and contribute! 🏗️
+
 ## Features
 
 - **Real-Time GraphQL Subscriptions** – Subscribe to blockchain state and transactions/instructions/actions

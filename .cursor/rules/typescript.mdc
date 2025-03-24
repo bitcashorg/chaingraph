@@ -26,7 +26,7 @@ globs: "**/*.{ts,tsx}"
 - Place the **happy path last** for improved readability.
 - **Avoid unnecessary else statements**; prefer `if-return` pattern.
 - Use **preconditions** to check for invalid states upfront.
-- Throw errors from `@repo/errors` for consistency.
+- Throw errors from `@chaingraph/errors` for consistency.
 - Implement **proper error logging** and **user-friendly messages**.
 - Consider using **custom error types** or **error factories** for consistent error handling.
 

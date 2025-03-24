@@ -1,0 +1,45 @@
+version: '3'
+
+dotenv: ['.env']
+silent: true
+
+tasks:
+  console:
+    cmds:
+      - hasura console --envfile .env
+
+  seed:
+    cmds:
+      - hasura seeds apply --envfile .env
+  
+  up:
+    cmds:
+      - docker-compose up -d --build hasura auth 
+      - docker-compose up -d --build core
+  
+  down:
+    cmds:
+      - docker-compose down -v --remove-orphans
+  
+  restart:
+    cmds:
+      - docker-compose stop
+      - task up
+  
+  reboot:
+    cmds:
+      - task down
+      - task boot
+
+  boot:
+    cmds:
+      - docker-compose up -d --build 
+      - sleep 60
+      - hasura migrate apply --database-name=default --envfile .env
+      - hasura metadata apply --envfile .env
+      - hasura seeds apply --envfile .env
+
+  migrate:
+      cmds:
+        - hasura migrate apply  --database-name=default --envfile .env
+        - hasura metadata apply --envfile .env

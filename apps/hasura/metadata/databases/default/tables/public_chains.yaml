@@ -1,0 +1,26 @@
+table:
+  name: chains
+  schema: public
+array_relationships:
+  - name: blocks
+    using:
+      foreign_key_constraint_on:
+        column: chain
+        table:
+          name: blocks
+          schema: public
+  - name: table_rows
+    using:
+      foreign_key_constraint_on:
+        column: chain
+        table:
+          name: table_rows
+          schema: public
+select_permissions:
+  - role: api_user
+    permission:
+      columns:
+        - chain_id
+        - chain_name
+        - rpc_endpoint
+      filter: {}

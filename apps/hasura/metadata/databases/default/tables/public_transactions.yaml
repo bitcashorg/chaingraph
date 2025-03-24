@@ -1,0 +1,14 @@
+table:
+  name: transactions
+  schema: public
+select_permissions:
+  - role: api_user
+    permission:
+      columns:
+        - block_num
+        - cpu_usage_us
+        - net_usage
+        - net_usage_words
+        - chain
+        - transaction_id
+      filter: {}

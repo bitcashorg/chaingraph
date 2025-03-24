@@ -7,13 +7,13 @@ globs: "**/*.{ts,tsx,css}"
 
 ## Core Principles
 - Use mobile-first responsive design
-- Use Shadcn UI components from @repo/ui
+- Use Shadcn UI components from @chaingraph/ui
 - Follow design system tokens
 - Use lucide-react icons
 
 ## Component Patterns
 ```tsx
-import { cn } from '@repo/utils'
+import { cn } from '@chaingraph/utils'
 import { cva } from 'class-variance-authority'
 
 const buttonVariants = cva(

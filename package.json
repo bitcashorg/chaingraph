@@ -1,21 +1,29 @@
 {
-  "name": "chaingraph",
-  "private": true,
-  "scripts": {
-    "build": "turbo run build",
-    "dev": "turbo dev",
-    "check-types": "turbo check-types",
-    "lint": "biome check .",
-    "lint:fix": "biome check . --write"
-  },
-  "devDependencies": {
-    "turbo": "^2.4.2",
-    "typescript": "5.7.3",
-    "@biomejs/biome": "^1.9.4"
-  },
-  "engines": {
-    "node": ">=18"
-  },
-  "packageManager": "pnpm@8.15.4",
-  "dependencies": {}
+	"name": "chaingraph",
+	"private": true,
+	"scripts": {
+		"build": "turbo run build",
+		"dev": "turbo dev",
+		"check-types": "turbo check-types",
+		"lint": "biome check .",
+		"lint:fix": "biome check . --write",
+		"backend:start": "bash scripts/supa-start.sh",
+		"backend:stop": "bash scripts/supa-stop.sh",
+		"backend:reset": "bash scripts/supa-reset.sh",
+		"hooks:pre-commit": "biome check --write --staged --no-errors-on-unmatched && git update-index --again",
+		"supa:psql": "psql -h localhost -p 54321 -U postgres -W"
+	},
+	"devDependencies": {
+		"simple-git-hooks": "2.11.1",
+		"turbo": "^2.4.2",
+		"typescript": "5.7.3",
+		"@biomejs/biome": "^1.9.4"
+	},
+	"engines": {
+		"node": ">=18"
+	},
+	"packageManager": "pnpm@8.15.4",
+	"simple-git-hooks": {
+		"pre-commit": "bun run hooks:pre-commit"
+	}
 }

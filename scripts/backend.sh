@@ -1,5 +1,11 @@
 #!/bin/bash
 
+# Exit on error, undefined variables, and pipe failures
+set -euo pipefail
+
+# Source shared library
+source "$(dirname "$0")/backend-lib.sh"
+
 # Colors for output
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
@@ -19,58 +25,40 @@ print_error() {
     echo -e "${RED}=>${NC} $1"
 }
 
-# Error handling
-set -e
-
 # Store the original directory
 ORIGINAL_DIR=$(pwd)
 SUPABASE_DIR="packages/supabase"
 
-# Ensure Supabase CLI is installed
-if ! command -v supabase &> /dev/null; then
-    print_error "Supabase CLI is not installed. Please install it first."
-    exit 1
-fi
+# Cleanup function
+cleanup() {
+    print_status "Cleaning up..."
+    stop_process "$SUPABASE_PID" "Supabase"
+    stop_process "$PONDER_PID" "Ponder"
+    if [ -n "${ORIGINAL_DIR:-}" ]; then
+        cd "$ORIGINAL_DIR" 2>/dev/null || true
+    fi
+}
+
+# Register cleanup on script exit
+trap cleanup EXIT INT TERM
+
+# Check Supabase CLI installation
+check_supabase_cli
 
 # Start Supabase without migrations and seeds
 print_status "Starting Supabase without migrations and seeds..."
-supabase stop --no-backup --workdir "$SUPABASE_DIR"
+supabase stop --no-backup --workdir "$SUPABASE_DIR" || true
 supabase start --workdir "$SUPABASE_DIR" &
 SUPABASE_PID=$!
 
 # Wait for Supabase to be ready
-print_status "Waiting for Supabase to be ready..."
-TIMEOUT=300 # enough time for first run to download docker images
-COUNTER=0
-until curl -s http://localhost:54323/rest/v1/ > /dev/null; do
-    sleep 1
-    COUNTER=$((COUNTER + 1))
-    if [ $COUNTER -ge $TIMEOUT ]; then
-        print_error "Timeout waiting for Supabase"
-        kill $SUPABASE_PID 2>/dev/null
-        exit 1
-    fi
-done
+wait_for_supabase "$SUPABASE_PID"
 
 # Start Ponder
-print_status "Starting Ponder..."
-cd apps/ponder
-bun run silent &
-PONDER_PID=$!
-cd "$ORIGINAL_DIR"
+start_ponder
 
 print_status "All services are running!"
 print_warning "Press Ctrl+C to stop all services."
 
-# Cleanup function
-cleanup() {
-    print_status "Cleaning up..."
-    kill $SUPABASE_PID $PONDER_PID 2>/dev/null || true
-    cd "$ORIGINAL_DIR" 2>/dev/null || true
-}
-
-# Register cleanup on script exit
-trap cleanup EXIT
-
 # Wait for user interrupt
-wait $SUPABASE_PID $PONDER_PID
+wait $SUPABASE_PID $PONDER_PID || true
