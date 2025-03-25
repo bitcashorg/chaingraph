@@ -1,31 +1,36 @@
 {
-	"name": "chaingraph",
-	"private": true,
-	"scripts": {
-		"build": "turbo run build",
-		"dev": "turbo dev",
-		"check-types": "turbo check-types",
-		"lint": "biome check .",
-		"lint:fix": "biome check . --write",
-		"hooks:pre-commit": "biome check --write --staged --no-errors-on-unmatched && git update-index --again",
-		"supa:start": "docker-compose -f docker/supa-docker-compose.yml -p chaingraph up --build -d",
-		"supa:stop": "docker-compose -f docker/supa-docker-compose.yml -p chaingraph stop",
-		"supa:reset": "pnpm run supa:down && pnpm run supa:start",
-		"supa:down": "docker-compose -f docker/supa-docker-compose.yml -p chaingraph down -v --remove-orphans",
-		"supa:logs": "docker-compose -f docker/supa-docker-compose.yml -p chaingraph logs -f",
-		"psql": "psql -h localhost -p 54321 -U postgres -W"
-	},
-	"devDependencies": {
-		"simple-git-hooks": "2.11.1",
-		"turbo": "^2.4.2",
-		"typescript": "5.7.3",
-		"@biomejs/biome": "^1.9.4"
-	},
-	"engines": {
-		"node": ">=18"
-	},
-	"packageManager": "pnpm@8.15.4",
-	"simple-git-hooks": {
-		"pre-commit": "bun run hooks:pre-commit"
-	}
+  "name": "chaingraph",
+  "private": true,
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo dev",
+    "check-types": "turbo check-types",
+    "lint": "biome check .",
+    "lint:fix": "biome check . --write",
+    "hooks:pre-commit": "biome check --write --staged --no-errors-on-unmatched && git update-index --again",
+    "supa:start": "docker-compose -f docker/supa-docker-compose.yml -p chaingraph up --build -d",
+    "supa:stop": "docker-compose -f docker/supa-docker-compose.yml -p chaingraph stop",
+    "supa:reset": "pnpm run supa:down && pnpm run supa:start",
+    "supa:down": "docker-compose -f docker/supa-docker-compose.yml -p chaingraph down -v --remove-orphans",
+    "supa:logs": "docker-compose -f docker/supa-docker-compose.yml -p chaingraph logs -f",
+    "hasura:start": "docker-compose -f docker/hasura-docker-compose.yml -p chaingraph up --build -d",
+    "hasura:stop": "docker-compose -f docker/hasura-docker-compose.yml -p chaingraph stop",
+    "hasura:reset": "pnpm run hasura:down && pnpm run hasura:start",
+    "hasura:down": "docker-compose -f docker/hasura-docker-compose.yml -p chaingraph down -v --remove-orphans",
+    "hasura:logs": "docker-compose -f docker/hasura-docker-compose.yml -p chaingraph logs -f",
+    "psql": "psql -h localhost -p 54321 -U postgres -W"
+  },
+  "devDependencies": {
+    "simple-git-hooks": "2.11.1",
+    "turbo": "^2.4.2",
+    "typescript": "5.7.3",
+    "@biomejs/biome": "^1.9.4"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "packageManager": "pnpm@8.15.4",
+  "simple-git-hooks": {
+    "pre-commit": "bun run hooks:pre-commit"
+  }
 }
