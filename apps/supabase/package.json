@@ -1,13 +1,13 @@
 {
-	"name": "db",
-	"version": "1.0.0",
-	"description": "postgres database service",
-	"scripts": {
-		"start": "supabase db start",
-		"stop": "supabase stop",
-		"reset": "supabase db reset",
-		"down": "supabase stop --no-backup "
-	},
-	"author": "",
-	"license": "MIT"
+  "name": "db",
+  "version": "1.0.0",
+  "description": "postgres database service",
+  "scripts": {
+    "start": "supabase db start",
+    "stop": "supabase stop",
+    "reset": "supabase db reset",
+    "down": "supabase stop --no-backup "
+  },
+  "author": "",
+  "license": "MIT"
 }

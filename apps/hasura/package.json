@@ -1,13 +1,13 @@
 {
-	"name": "hasura",
-	"version": "1.0.0",
-	"description": "ChainGraph Hasura Engine",
-	"scripts": {
-		"start": "docker build -t chaingraph-hasura . && docker run --env-file .env -p 8080:8080 chaingraph-hasura",
-		"stop": "docker stop chaingraph-hasura",
-		"reset": "npm run stop && docker rm chaingraph-hasura",
-		"down": "docker rm -v chaingraph-hasura"
-	},
-	"author": "",
-	"license": "MIT"
+  "name": "hasura",
+  "version": "1.0.0",
+  "description": "ChainGraph Hasura Engine",
+  "scripts": {
+    "start": "docker build -t chaingraph-hasura . && docker run --env-file .env -p 8080:8080 chaingraph-hasura",
+    "stop": "docker stop chaingraph-hasura",
+    "reset": "npm run stop && docker rm chaingraph-hasura",
+    "down": "docker rm -v chaingraph-hasura"
+  },
+  "author": "",
+  "license": "MIT"
 }

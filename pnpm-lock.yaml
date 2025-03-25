@@ -11,6 +11,9 @@ importers:
       '@biomejs/biome':
         specifier: ^1.9.4
         version: 1.9.4
+      simple-git-hooks:
+        specifier: 2.11.1
+        version: 2.11.1
       turbo:
         specifier: ^2.4.2
         version: 2.4.4
@@ -18,7 +21,7 @@ importers:
         specifier: 5.7.3
         version: 5.7.3
 
-  apps/db: {}
+  apps/hasura: {}
 
   apps/indexer:
     dependencies:
@@ -119,6 +122,8 @@ importers:
       typescript:
         specifier: ^4.4.3
         version: 4.9.5
+
+  apps/supabase: {}
 
   packages/mappings:
     dependencies:
@@ -1253,6 +1258,12 @@ packages:
   /shebang-regex@3.0.0:
     resolution: {integrity: sha512-7++dFhtcx3353uBaq8DDR4NuxBetBzC7ZQOhmTQInHEd6bSrXdiEyzCvG07Z44UYdLShWUyXt5M/yhz8ekcb1A==}
     engines: {node: '>=8'}
+
+  /simple-git-hooks@2.11.1:
+    resolution: {integrity: sha512-tgqwPUMDcNDhuf1Xf6KTUsyeqGdgKMhzaH4PAZZuzguOgTl5uuyeYe/8mWgAr6IBxB5V06uqEf6Dy37gIWDtDg==}
+    hasBin: true
+    requiresBuild: true
+    dev: true
 
   /simple-swizzle@0.2.2:
     resolution: {integrity: sha512-JA//kQgZtbuY83m+xT+tXJkmJncGMTFT+C+g2h2R9uxkYIrE2yy9sgmcLhCnw57/WSD+Eh3J97FPEDFnbXnDUg==}

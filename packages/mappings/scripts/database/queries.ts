@@ -1,7 +1,7 @@
 // ColumnSet for bulk inserts
 // https://github.com/vitaly-t/pg-promise/wiki/Data-Imports
 
-import { ChainGraphAppManifest, ChainGraphMappings } from '.'
+import type { ChainGraphAppManifest, ChainGraphMappings } from '.'
 import { logger } from '../lib/logger'
 import { pgp } from './db'
 

@@ -1,5 +1,5 @@
+import type { ChainGraphAppManifest, ChainGraphMappings } from '../lib/types'
 import { db } from './db'
-import { ChainGraphAppManifest, ChainGraphMappings } from '../lib/types'
 import {
   createUpsertManifestQuery,
   createUpsertMappingsQuery,
