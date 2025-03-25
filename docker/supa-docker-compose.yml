@@ -1,3 +1,7 @@
+## NOTE: This is a work in progress to integrate Supabase
+#        or migrate entirely to Supabase.
+#        This is not ready for production use.
+
 services:
   db:
     container_name: chaingraph-db

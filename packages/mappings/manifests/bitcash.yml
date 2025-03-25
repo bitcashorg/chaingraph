@@ -1,0 +1,34 @@
+app_name: bitcash
+app_id: b15230ac-9fc0-41ee-9669-af889d609338
+description: Bitcash Bank
+url: 'https://bitcash.org'
+whitelist:
+  - chain: eos
+    contract: bank.bk
+    start_block: 219468569
+    actions:
+      - '*'
+    tables:
+      - '*'
+  - chain: eos
+    contract: token.bk
+    start_block: 219468569
+    actions:
+      - '*'
+    tables:
+      - '*'
+  - chain: eos
+    contract: accounts.bk
+    start_block: 219468569
+    actions:
+      - '*'
+    tables:
+      - '*'
+  - chain: eos
+    contract: delphioracle
+    start_block: 219468569
+    actions: []
+    tables:
+      - table: datapoints
+        scopes:
+          - '*'

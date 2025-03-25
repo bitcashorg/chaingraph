@@ -22,38 +22,25 @@ Hasura is a high-performance GraphQL engine that exposes the GraphQL schema and 
 For more information on scaling, read this blog post: [Scaling to 1 Million Active GraphQL Subscriptions](https://hasura.io/blog/1-million-active-graphql-subscriptions/)
 
 
-
-> 🚧 Note: Migration from previous repos in progress (80% complete) - feel free to explore and contribute! 🏗️
-
 ## Project Structure
 
 ### Apps
-- [__apps/auth__](./apps/auth/README.md) - Authentication service for api-key validations
 - [__apps/chaingraph.io__](./apps/chaingraph.io/README.md) - Main website
-- [__apps/docs__](./apps/docs/README.md) - Documentation site
-- [__apps/engine__](./apps/engine/README.md) - GraphQL engine and database migrations using Hasura
-- [__apps/explorer__](./apps/explorer/README.md) - GraphiQL interface for developers
+- [__apps/supabase__](./apps/supabase/README.md) - Supabase support ( experimental )
+- [__apps/hasura__](./apps/hasura/README.md) - GraphQL engine and database migrations using Hasura
 - [__apps/indexer__](./apps/indexer/README.md) - Multi-threaded NodeJS service for real-time data deserialization and indexing
 
 ### Packages
-- [__packages/ui__](./packages/ui/README.md) - UI components
-- [__packages/core__](./packages/core/README.md) - JavaScript client
-- [__packages/api__](./packages/api/README.md) - GraphQL API client, SDK, and hooks
-- [__packages/react__](./packages/react/README.md) - React hooks for blockchain data
-- [__packages/supabase__](./packages/supabase/README.md) - Database integration
-- [__packages/lib__](./packages/lib/README.md) - Shared utilities
-- [__packages/errors__](./packages/errors/README.md) - Error handling
-- [__packages/mappings__](./packages/mappings/README.md) - Data mappings
+
+- [__packages/mappings__](./packages/mappings/README.md) - Data mappings for indexing ( temporary )
 - [__packages/tsconfig__](./packages/tsconfig/README.md) - TypeScript configuration
 
 ## Technology
 
 ChainGraph API nodes are light and index whitelisted data tables and actions. The project is split into separate micro-services to make it easier to scale:
 
-- **chaingraph-engine**: GraphQL engine and database migrations using Hasura
-- **chaingraph-auth**: Authentication service for api-key validations
+- **chaingraph-graphql**: GraphQL engine and database migrations using Hasura
 - **chaingraph-indexer**: Multi-threaded NodeJS service for real-time data deserialization and indexing
-- **chaingraph-explorer**: GraphiQL interface for developers
 
 ## Data Whitelisting
 
@@ -77,23 +64,28 @@ pnpm install
 ### Development Commands
 
 ```bash
-pnpm backend    # Start backend services
-pnpm dev        # Dev server
-pnpm build      # Production build
-pnpm test       # Run tests
+# Hasura Setup and Management
+pnpm hasura:start  # Start Hasura services (GraphQL Engine, Postgres, Data Connector)
+pnpm hasura:stop   # Stop Hasura services
+pnpm hasura:reset  # Reset Hasura environment (removes volumes and restarts)
+pnpm hasura:logs   # View Hasura logs in real-time
+pnpm psql          # Connect to Postgres database directly
 ```
 
-## Technologies Used
+###  Configuration
 
-- **Antelope** – Blockchain framework
-- **Node.js** – Server-side JavaScript
-- **GraphQL** – API query language
-- **Docker** – Containerization
-- **GCP** – Cloud platform
-- **RXJS** – Reactive programming
-- **ReactJS** – Frontend library
-- **TypeScript** – Typed JavaScript
-- **Hasura** – GraphQL engine
+ChainGraph runs with the following default configuration:
+
+- **GraphQL API**: http://localhost:3333
+- **Hasura Console**: http://localhost:3333/console
+- **Postgres Database**: localhost:5432
+
+Key environment variables:
+- `HASURA_GRAPHQL_ADMIN_SECRET`: Required for console access and admin operations
+- `HASURA_GRAPHQL_METADATA_DATABASE_URL`: Postgres connection for Hasura metadata
+- `PG_DATABASE_URL`: Main database connection string
+
+> Note: In production, make sure to change the admin secret and secure your environment variables.
 
 ## Contributing
 

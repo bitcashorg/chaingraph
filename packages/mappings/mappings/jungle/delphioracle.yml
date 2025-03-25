@@ -1,0 +1,5 @@
+chain: jungle
+contract: delphioracle
+tables:
+  - table: datapoints
+    table_key: id
