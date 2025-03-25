@@ -7,11 +7,13 @@
 		"check-types": "turbo check-types",
 		"lint": "biome check .",
 		"lint:fix": "biome check . --write",
-		"backend:start": "bash scripts/supa-start.sh",
-		"backend:stop": "bash scripts/supa-stop.sh",
-		"backend:reset": "bash scripts/supa-reset.sh",
 		"hooks:pre-commit": "biome check --write --staged --no-errors-on-unmatched && git update-index --again",
-		"supa:psql": "psql -h localhost -p 54321 -U postgres -W"
+		"supa:start": "docker-compose -f docker/supa-docker-compose.yml -p chaingraph up --build -d",
+		"supa:stop": "docker-compose -f docker/supa-docker-compose.yml -p chaingraph stop",
+		"supa:reset": "pnpm run supa:down && pnpm run supa:start",
+		"supa:down": "docker-compose -f docker/supa-docker-compose.yml -p chaingraph down -v --remove-orphans",
+		"supa:logs": "docker-compose -f docker/supa-docker-compose.yml -p chaingraph logs -f",
+		"psql": "psql -h localhost -p 54321 -U postgres -W"
 	},
 	"devDependencies": {
 		"simple-git-hooks": "2.11.1",

@@ -1,0 +1,93 @@
+services:
+  db:
+    container_name: chaingraph-db
+    image: supabase/postgres:15.8.1.060
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    volumes:
+      - ../apps/supabase/db-data:/var/lib/postgresql/data  # Persist DB in `/apps/supabase/db-data`
+      - ../apps/supabase/db-init.sql:/docker-entrypoint-initdb.d/db-init.sql  # Init script
+    networks:
+      - chaingraph-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -h localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  studio:
+    container_name: chaingraph-studio
+    image: supabase/studio:latest
+    restart: always
+    ports:
+      - "3000:3000"
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      SUPABASE_DATABASE_URL: postgres://postgres:postgres@chaingraph-db:5432/postgres
+      SUPABASE_URL: http://localhost:8000
+      SUPABASE_ANON_KEY: super-secret-key
+      SUPABASE_SERVICE_ROLE_KEY: super-secret-role-key
+    networks:
+      - chaingraph-network
+
+  chaingraph-hasura:
+    container_name: chaingraph-hasura
+    image: hasura/graphql-engine:v2.46.0
+    restart: always
+    ports:
+      - "3333:8080"
+    environment:
+      ## Postgres database to store Hasura metadata
+      HASURA_GRAPHQL_METADATA_DATABASE_URL: postgres://postgres:postgres@chaingraph-db:5432/postgres
+      ## Data source connection string
+      PG_DATABASE_URL: postgres://postgres:postgres@chaingraph-db:5432/postgres
+      ## Enable Hasura console
+      HASURA_GRAPHQL_ENABLE_CONSOLE: "true"
+      ## Enable debugging mode (disable in production)
+      HASURA_GRAPHQL_DEV_MODE: "true"
+      ## Log types
+      HASURA_GRAPHQL_ENABLED_LOG_TYPES: startup, http-log, webhook-log, websocket-log, query-log
+      ## Uncomment to set an admin secret
+      HASURA_GRAPHQL_ADMIN_SECRET: myadminsecretkey
+      HASURA_GRAPHQL_CORS_DOMAIN: "*"
+      HASURA_GRAPHQL_UNAUTHORIZED_ROLE: "anonymous"
+      HASURA_GRAPHQL_ENABLED_APIS: graphql, metadata
+      HASURA_GRAPHQL_MIGRATIONS_DIR: /migrations
+      HASURA_GRAPHQL_METADATA_DIR: /metadata
+    volumes:
+      - ../apps/hasura/migrations:/migrations
+      - ../apps/hasura/metadata:/metadata
+    depends_on:
+      db:
+        condition: service_healthy
+      data-connector-agent:
+        condition: service_healthy
+    networks:
+      - chaingraph-network
+
+  data-connector-agent:
+    image: hasura/graphql-data-connector:v2.46.0
+    restart: always
+    ports:
+      - 8081:8081
+    environment:
+      QUARKUS_LOG_LEVEL: ERROR # FATAL, ERROR, WARN, INFO, DEBUG, TRACE
+      QUARKUS_OPENTELEMETRY_ENABLED: "false"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8081/api/v1/athena/health"]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+      start_period: 5s
+
+networks:
+  chaingraph-network:
+    name: chaingraph
+    driver: bridge

@@ -19,7 +19,7 @@ services:
 
   chaingraph-hasura:
     container_name: chaingraph-hasura
-    build: ./
+    build: ./apps/hasura
     image: chaingraph-hasura:local
     ports:
       - "3333:3333"
