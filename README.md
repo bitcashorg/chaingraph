@@ -32,6 +32,7 @@ For more information on scaling, read this blog post: [Scaling to 1 Million Acti
 
 ### Packages
 
+- [__packages/genql__](./packages/genql/README.md) - GenQL client for type-safe GraphQL queries
 - [__packages/mappings__](./packages/mappings/README.md) - Data mappings for indexing ( temporary )
 - [__packages/tsconfig__](./packages/tsconfig/README.md) - TypeScript configuration
 
