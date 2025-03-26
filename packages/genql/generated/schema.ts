@@ -1553,7 +1553,9 @@ _inc?: (actions_inc_input | null),
 /** prepend existing jsonb value of filtered columns with new jsonb value */
 _prepend?: (actions_prepend_input | null),
 /** sets the columns of the filtered rows to the given values */
-_set?: (actions_set_input | null),where: actions_bool_exp}
+_set?: (actions_set_input | null),
+/** filter the rows which have to be updated */
+where: actions_bool_exp}
 
 
 /** aggregate var_pop on columns */
@@ -1740,7 +1742,9 @@ export interface api_users_updates {
 /** increments the numeric columns with given value of the filtered values */
 _inc?: (api_users_inc_input | null),
 /** sets the columns of the filtered rows to the given values */
-_set?: (api_users_set_input | null),where: api_users_bool_exp}
+_set?: (api_users_set_input | null),
+/** filter the rows which have to be updated */
+where: api_users_bool_exp}
 
 
 /** aggregate var_pop on columns */
@@ -1968,7 +1972,9 @@ export interface blocks_updates {
 /** increments the numeric columns with given value of the filtered values */
 _inc?: (blocks_inc_input | null),
 /** sets the columns of the filtered rows to the given values */
-_set?: (blocks_set_input | null),where: blocks_bool_exp}
+_set?: (blocks_set_input | null),
+/** filter the rows which have to be updated */
+where: blocks_bool_exp}
 
 
 /** aggregate var_pop on columns */
@@ -2158,7 +2164,9 @@ export interface chains_stream_cursor_value_input {chain_id?: (Scalars['String']
 
 export interface chains_updates {
 /** sets the columns of the filtered rows to the given values */
-_set?: (chains_set_input | null),where: chains_bool_exp}
+_set?: (chains_set_input | null),
+/** filter the rows which have to be updated */
+where: chains_bool_exp}
 
 export interface jsonb_cast_exp {String?: (String_comparison_exp | null)}
 
@@ -2283,7 +2291,9 @@ export interface manifests_stream_cursor_value_input {app_id?: (Scalars['uuid'] 
 
 export interface manifests_updates {
 /** sets the columns of the filtered rows to the given values */
-_set?: (manifests_set_input | null),where: manifests_bool_exp}
+_set?: (manifests_set_input | null),
+/** filter the rows which have to be updated */
+where: manifests_bool_exp}
 
 
 /** columns and relationships of "mappings" */
@@ -2419,7 +2429,9 @@ _delete_key?: (mappings_delete_key_input | null),
 /** prepend existing jsonb value of filtered columns with new jsonb value */
 _prepend?: (mappings_prepend_input | null),
 /** sets the columns of the filtered rows to the given values */
-_set?: (mappings_set_input | null),where: mappings_bool_exp}
+_set?: (mappings_set_input | null),
+/** filter the rows which have to be updated */
+where: mappings_bool_exp}
 
 
 /** mutation root */
@@ -3525,7 +3537,9 @@ _delete_key?: (table_rows_delete_key_input | null),
 /** prepend existing jsonb value of filtered columns with new jsonb value */
 _prepend?: (table_rows_prepend_input | null),
 /** sets the columns of the filtered rows to the given values */
-_set?: (table_rows_set_input | null),where: table_rows_bool_exp}
+_set?: (table_rows_set_input | null),
+/** filter the rows which have to be updated */
+where: table_rows_bool_exp}
 
 
 /** Boolean expression to compare columns of type "timestamptz". All fields are combined with logical 'AND'. */
@@ -3713,7 +3727,9 @@ export interface transactions_updates {
 /** increments the numeric columns with given value of the filtered values */
 _inc?: (transactions_inc_input | null),
 /** sets the columns of the filtered rows to the given values */
-_set?: (transactions_set_input | null),where: transactions_bool_exp}
+_set?: (transactions_set_input | null),
+/** filter the rows which have to be updated */
+where: transactions_bool_exp}
 
 
 /** aggregate var_pop on columns */
@@ -3946,7 +3962,9 @@ _inc?: (whitelists_inc_input | null),
 /** prepend existing jsonb value of filtered columns with new jsonb value */
 _prepend?: (whitelists_prepend_input | null),
 /** sets the columns of the filtered rows to the given values */
-_set?: (whitelists_set_input | null),where: whitelists_bool_exp}
+_set?: (whitelists_set_input | null),
+/** filter the rows which have to be updated */
+where: whitelists_bool_exp}
 
 
 /** aggregate var_pop on columns */
@@ -4894,10 +4912,10 @@ export const enumMappingsUpdateColumn = {
 }
 
 export const enumOrderBy = {
-   asc: 'asc' as order_by,
+   asc: 'asc' as const,
    asc_nulls_first: 'asc_nulls_first' as const,
    asc_nulls_last: 'asc_nulls_last' as const,
-   desc: 'desc' as order_by,
+   desc: 'desc' as const,
    desc_nulls_first: 'desc_nulls_first' as const,
    desc_nulls_last: 'desc_nulls_last' as const
 }
@@ -4968,11 +4986,4 @@ export const enumWhitelistsUpdateColumn = {
    history_ready: 'history_ready' as const,
    start_block: 'start_block' as const,
    tables: 'tables' as const
-}
-
-export type chain_graph_actions_subscription_variables = {
-    where?: (actions_bool_exp | null);
-    order_by?: (Array<actions_order_by> | actions_order_by);
-    offset?: Scalars['Int'];
-    limit?: Scalars['Int'];
 }

@@ -536,6 +536,8 @@ input actions_updates {
 
   """sets the columns of the filtered rows to the given values"""
   _set: actions_set_input
+
+  """filter the rows which have to be updated"""
   where: actions_bool_exp!
 }
 
@@ -805,6 +807,8 @@ input api_users_updates {
 
   """sets the columns of the filtered rows to the given values"""
   _set: api_users_set_input
+
+  """filter the rows which have to be updated"""
   where: api_users_bool_exp!
 }
 
@@ -937,7 +941,7 @@ enum blocks_constraint {
   blocks_block_id_key
 
   """
-  unique or primary key constraint on columns "chain", "block_num"
+  unique or primary key constraint on columns "block_num", "chain"
   """
   blocks_pkey
 }
@@ -1162,6 +1166,8 @@ input blocks_updates {
 
   """sets the columns of the filtered rows to the given values"""
   _set: blocks_set_input
+
+  """filter the rows which have to be updated"""
   where: blocks_bool_exp!
 }
 
@@ -1455,6 +1461,8 @@ enum chains_update_column {
 input chains_updates {
   """sets the columns of the filtered rows to the given values"""
   _set: chains_set_input
+
+  """filter the rows which have to be updated"""
   where: chains_bool_exp!
 }
 
@@ -1689,6 +1697,8 @@ enum manifests_update_column {
 input manifests_updates {
   """sets the columns of the filtered rows to the given values"""
   _set: manifests_set_input
+
+  """filter the rows which have to be updated"""
   where: manifests_bool_exp!
 }
 
@@ -1751,7 +1761,7 @@ unique or primary key constraints on table "mappings"
 """
 enum mappings_constraint {
   """
-  unique or primary key constraint on columns "chain", "contract"
+  unique or primary key constraint on columns "contract", "chain"
   """
   mappings_pkey
 }
@@ -1941,6 +1951,8 @@ input mappings_updates {
 
   """sets the columns of the filtered rows to the given values"""
   _set: mappings_set_input
+
+  """filter the rows which have to be updated"""
   where: mappings_bool_exp!
 }
 
@@ -3716,7 +3728,7 @@ unique or primary key constraints on table "table_rows"
 """
 enum table_rows_constraint {
   """
-  unique or primary key constraint on columns "chain", "contract", "primary_key", "scope", "table"
+  unique or primary key constraint on columns "scope", "primary_key", "table", "contract", "chain"
   """
   tables_pkey
 }
@@ -3941,6 +3953,8 @@ input table_rows_updates {
 
   """sets the columns of the filtered rows to the given values"""
   _set: table_rows_set_input
+
+  """filter the rows which have to be updated"""
   where: table_rows_bool_exp!
 }
 
@@ -4026,7 +4040,7 @@ unique or primary key constraints on table "transactions"
 """
 enum transactions_constraint {
   """
-  unique or primary key constraint on columns "chain", "transaction_id"
+  unique or primary key constraint on columns "transaction_id", "chain"
   """
   transactions_pkey
 }
@@ -4236,6 +4250,8 @@ input transactions_updates {
 
   """sets the columns of the filtered rows to the given values"""
   _set: transactions_set_input
+
+  """filter the rows which have to be updated"""
   where: transactions_bool_exp!
 }
 
@@ -4360,7 +4376,7 @@ unique or primary key constraints on table "whitelists"
 """
 enum whitelists_constraint {
   """
-  unique or primary key constraint on columns "chain", "contract", "app_id"
+  unique or primary key constraint on columns "app_id", "contract", "chain"
   """
   whitelists_pkey
 }
@@ -4605,6 +4621,8 @@ input whitelists_updates {
 
   """sets the columns of the filtered rows to the given values"""
   _set: whitelists_set_input
+
+  """filter the rows which have to be updated"""
   where: whitelists_bool_exp!
 }
 
