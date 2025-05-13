@@ -3,14 +3,14 @@ app_id: b15230ac-9fc0-41ee-8888-af889d609377
 description: Dboard
 url: 'https://eos.dboard.ai'
 whitelist:
-  - chain: eos
+  - chain: l1
     contract: eosmakeprops
     start_block: 399571106
     actions:
       - '*'
     tables:
       - '*'
-  - chain: eos
+  - chain: l1
     contract: eospropvotes
     start_block: 399571106
     actions:

@@ -1,5 +1,0 @@
-chain: jungle
-contract: bitcashaccts
-tables:
-  - table: accounts
-    table_key: name

@@ -1,5 +1,5 @@
-chain: jungle
-contract: bitcashtokn2
+chain: l1
+contract: token.bk
 type: standard_token
 tables:
   - table: stat

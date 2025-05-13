@@ -1,0 +1,52 @@
+services:
+  hasura:
+    image: hasura/graphql-engine:v2.46.0.cli-migrations-v3
+    container_name: chaingraph-hasura
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      ## Postgres database to store Hasura metadata
+      HASURA_GRAPHQL_METADATA_DATABASE_URL: postgresql://postgres:etMOcpqoBE5f7RxQ@db.smaccujkqqrazoeeoscc.supabase.co:5432/postgres?sslmode=disable 
+      HASURA_GRAPHQL_DATABASE_URL: postgresql://postgres:etMOcpqoBE5f7RxQ@db.smaccujkqqrazoeeoscc.supabase.co:5432/postgres?sslmode=disable  # Ensure this is set
+      ## Data source connection string
+      PG_DATABASE_URL: postgresql://postgres:etMOcpqoBE5f7RxQ@db.smaccujkqqrazoeeoscc.supabase.co:5432/postgres?sslmode=disable 
+      ## Enable Hasura console
+      HASURA_GRAPHQL_ENABLE_CONSOLE: "true"
+      ## Enable debugging mode (disable in production)
+      HASURA_GRAPHQL_DEV_MODE: "true"
+      ## Log types
+      HASURA_GRAPHQL_ENABLED_LOG_TYPES: startup, http-log, webhook-log, websocket-log, query-log
+      HASURA_GRAPHQL_ADMIN_SECRET: myadminsecretkey
+      HASURA_GRAPHQL_CORS_DOMAIN: "*"
+      HASURA_GRAPHQL_UNAUTHORIZED_ROLE: "anonymous"
+      HASURA_GRAPHQL_ENABLED_APIS: graphql, metadata
+      ## Enable automatic migrations and metadata application
+      HASURA_GRAPHQL_MIGRATIONS_SERVER_TIMEOUT: "60"
+      HASURA_GRAPHQL_NO_OF_RETRIES: "5"
+      HASURA_GRAPHQL_MIGRATIONS_DIR: /hasura-migrations
+      HASURA_GRAPHQL_METADATA_DIR: /hasura-metadata
+    volumes:
+      - ../apps/hasura/migrations:/hasura-migrations
+      - ../apps/hasura/metadata:/hasura-metadata
+    depends_on:
+      data-connector-agent:
+        condition: service_healthy
+
+  data-connector-agent:
+    image: hasura/graphql-data-connector:v2.46.0
+    container_name: chaingraph-connector
+    restart: always
+    ports:
+      - 8081:8081
+    environment:
+      QUARKUS_LOG_LEVEL: ERROR # FATAL, ERROR, WARN, INFO, DEBUG, TRACE
+      QUARKUS_OPENTELEMETRY_ENABLED: "false"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8081/api/v1/athena/health"]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+      start_period: 5s
+
+    

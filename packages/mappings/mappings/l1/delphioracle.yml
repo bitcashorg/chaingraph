@@ -1,4 +1,4 @@
-chain: eos
+chain: l1
 contract: delphioracle
 tables:
   - table: datapoints
