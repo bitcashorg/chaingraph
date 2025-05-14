@@ -7,17 +7,17 @@ services:
       - "8080:8080"
     environment:
       ## Postgres database to store Hasura metadata
-      HASURA_GRAPHQL_METADATA_DATABASE_URL: postgres://postgres:ip_address@db:5432/postgres
-      HASURA_GRAPHQL_DATABASE_URL: postgres://postgres:ip_address@db:5432/postgres # Ensure this is set
+      HASURA_GRAPHQL_METADATA_DATABASE_URL: ${HASURA_GRAPHQL_METADATA_DATABASE_URL}
+      HASURA_GRAPHQL_DATABASE_URL: ${HASURA_GRAPHQL_DATABASE_URL}
       ## Data source connection string
-      PG_DATABASE_URL: postgres://postgres:ip_address@db:5432/postgres
+      PG_DATABASE_URL: ${PG_DATABASE_URL}
       ## Enable Hasura console
       HASURA_GRAPHQL_ENABLE_CONSOLE: "true"
       ## Enable debugging mode (disable in production)
       HASURA_GRAPHQL_DEV_MODE: "true"
       ## Log types
       HASURA_GRAPHQL_ENABLED_LOG_TYPES: startup, http-log, webhook-log, websocket-log, query-log
-      HASURA_GRAPHQL_ADMIN_SECRET: myadminsecretkey
+      HASURA_GRAPHQL_ADMIN_SECRET: ${HASURA_GRAPHQL_ADMIN_SECRET}
       HASURA_GRAPHQL_CORS_DOMAIN: "*"
       HASURA_GRAPHQL_UNAUTHORIZED_ROLE: "anonymous"
       HASURA_GRAPHQL_ENABLED_APIS: graphql, metadata

@@ -19,6 +19,11 @@
     "hasura:reset": "pnpm run hasura:down && pnpm run hasura:start",
     "hasura:down": "docker-compose -f docker/hasura-docker-compose.yml -p chaingraph down -v --remove-orphans",
     "hasura:logs": "docker-compose -f docker/hasura-docker-compose.yml -p chaingraph logs -f",
+    "external:start": "docker-compose --env-file docker/.env -f docker/external-db-docker-compose.yml -p chaingraph up --build -d",
+    "external:stop": "docker-compose --env-file docker/.env -f docker/external-db-docker-compose.yml -p chaingraph stop",
+    "external:reset": "pnpm run external:down && pnpm run external:start",
+    "external:down": "docker-compose --env-file docker/.env -f docker/external-db-docker-compose.yml -p chaingraph down -v --remove-orphans",
+    "external:logs": "docker-compose --env-file docker/.env -f docker/external-db-docker-compose.yml -p chaingraph logs -f",
     "psql": "psql -h localhost -p 54321 -U postgres -W"
   },
   "devDependencies": {
