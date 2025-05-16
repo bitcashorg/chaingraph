@@ -1,6 +1,6 @@
-# ChainGraph EOSIO Mappings
+# ChainGraph Antelope Contract Mappings
 
-Temporary repository for EOSIO contract mappings
+Temporary repository for Antelope contract mappings
 
 ## Documentation
 
@@ -8,6 +8,6 @@ Temporary repository for EOSIO contract mappings
 
 ## Usage example
 
-1. set a contract mappings `yarn mappings l1 delphioracle`, ...
-2. set an app manifest `yarn manifest bitcahs`
+1. set a contract mappings `bun run mappings l1 delphioracle`, ...
+2. set an app manifest `bun run manifest bitcash`
 

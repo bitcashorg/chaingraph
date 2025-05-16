@@ -5,28 +5,28 @@ url: 'https://app.bitcash.org'
 whitelist:
   - chain: l1
     contract: bank.bk
-    start_block: 219468569
+    start_block: 6176683
     actions:
       - '*'
     tables:
       - '*'
   - chain: l1
     contract: token.bk
-    start_block: 219468569
+    start_block: 6176683
     actions:
       - '*'
     tables:
       - '*'
   - chain: l1
     contract: accounts.bk
-    start_block: 219468569
+    start_block: 6176683
     actions:
       - '*'
     tables:
       - '*'
   - chain: l1
     contract: delphioracle
-    start_block: 219468569
+    start_block: 6176683
     actions: []
     tables:
       - table: datapoints
