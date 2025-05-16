@@ -50,27 +50,26 @@ ChainGraph is currently using a contract mapping protocol that allows developers
 ## Development Setup
 
 ### Requirements
-- Node.js 18+
-- pnpm
+- Bun 1.0+
 
 ### Quick Start
 
 ```bash
-npm install -g pnpm
+bun install
 git clone https://github.com/chaingraph/chaingraph.git
 cd chaingraph
-pnpm install
+bun install
 ```
 
 ### Development Commands
 
 ```bash
 # Hasura Setup and Management
-pnpm hasura:start  # Start Hasura services (GraphQL Engine, Postgres, Data Connector)
-pnpm hasura:stop   # Stop Hasura services
-pnpm hasura:reset  # Reset Hasura environment (removes volumes and restarts)
-pnpm hasura:logs   # View Hasura logs in real-time
-pnpm psql          # Connect to Postgres database directly
+bun run hasura:start  # Start Hasura services (GraphQL Engine, Postgres, Data Connector)
+bun run hasura:stop   # Stop Hasura services
+bun run hasura:reset  # Reset Hasura environment (removes volumes and restarts)
+bun run hasura:logs   # View Hasura logs in real-time
+bun run psql          # Connect to Postgres database directly
 ```
 
 ###  Configuration

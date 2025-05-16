@@ -20,7 +20,7 @@
 		"graphql-ws": "^6.0.4"
 	},
 	"devDependencies": {
-		"@chaingraph/tsconfig": "*",
+		"@chaingraph/tsconfig": "workspace:*",
 		"@genql/cli": "^6.3.3",
 		"genql": "^2.0.1",
 		"tsup": "^8.4.0",
