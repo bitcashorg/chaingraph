@@ -9,7 +9,7 @@ export * from "../../generated";
 export function createChaingraphClient({
 	apiKey = "",
 	options = {},
-	url = "https://chaingraph-hasura-37160526315.us-central1.run.app",
+	url = "https://graph.bitcash.org",
 	config = {},
 }: GraphQLSdkProps) {
 	const headers = {
@@ -18,7 +18,6 @@ export function createChaingraphClient({
 
 	let subscribe;
 
-	// * Guarding if webSocketImpl is in options
 	if ("webSocketImpl" in options) {
 		const { subscribe: subscriptions } = createWsClient({
 			url: url.replace("http", "ws"),

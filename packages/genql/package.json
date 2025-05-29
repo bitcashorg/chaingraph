@@ -1,8 +1,11 @@
 {
-	"name": "@chaingraph/genql",
+	"name": "@l1network/chaingraph-genql",
 	"version": "0.1.0",
 	"type": "module",
 	"description": "chaingraph genql",
+	"publishConfig": {
+		"access": "public"
+	},
 	"main": "./dist/index.js",
 	"module": "./dist/index.mjs",
 	"types": "./dist/index.d.ts",
