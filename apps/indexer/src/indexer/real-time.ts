@@ -1,4 +1,4 @@
-import omit from "lodash";
+import _ from "lodash";
 import { config } from "../config";
 import {
 	deleteTableRows,
@@ -11,7 +11,7 @@ import { deleteBlock } from "../database/queries";
 import { logger } from "../lib/logger";
 import type { MappingsReader } from "../mappings";
 import { loadReader } from "../reader/ship-reader";
-import type { ChainGraphAction } from "../types";
+import type { ChainGraphAction, ChainGraphBlock } from "../types";
 import type { WhitelistReader } from "../whitelist";
 import { getChainGraphTableRowData } from "./utils";
 
@@ -61,13 +61,10 @@ export const startRealTimeStreaming = async (
 			// delete block data in case of microfork
 			deleteBlock(config.reader.chain, block.block_num);
 
+			const blockData = _.omit(block, ["actions", "table_rows", "transactions", "chain_id"]);
+
 			// insert block data
-			await upsertBlocks([
-				{
-					chain: config.reader.chain,
-					...omit(block, ["actions", "table_rows", "transactions", "chain_id"]),
-				},
-			]);
+			await upsertBlocks([{ ...blockData, chain: config.reader.chain }]);
 
 			// insert transaction data
 			const transactions = block.transactions.map((trx) => ({
