@@ -12,9 +12,9 @@ export function createChaingraphClient({
 	url = "https://graph.bitcash.org",
 	config = {},
 }: GraphQLSdkProps) {
-	const headers = apiKey? {
+	const headers =  {
 		"x-chaingraph-api-key": apiKey,
-	}: {}
+	}
 
 	let subscribe;
 
