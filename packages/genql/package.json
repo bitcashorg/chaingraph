@@ -1,6 +1,6 @@
 {
 	"name": "@l1network/chaingraph-genql",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"type": "module",
 	"description": "chaingraph genql",
 	"publishConfig": {
@@ -10,7 +10,7 @@
 	"module": "./dist/index.mjs",
 	"types": "./dist/index.d.ts",
 	"scripts": {
-		"gen": "genql --endpoint https://chaingraph-hasura-37160526315.us-central1.run.app/v1/graphql --output ./generated -H 'content-type: application/json' -H 'x-hasura-admin-secret: 905fde9ebb04e6d93a9e1684f886235d92746684b9bd99dbb90479c0b184056c'",
+		"gen": "genql --endpoint https://chaingraph.app/v1/graphql --output ./generated -H 'content-type: application/json' -H 'x-hasura-admin-secret: xxx'",
 		"build": "tsup src/index.ts --format esm,cjs --dts --external react",
 		"dev": "tsup src/index.ts --format esm,cjs --watch --dts --external react",
 		"lint": "eslint \"src/**/*.ts*\"",

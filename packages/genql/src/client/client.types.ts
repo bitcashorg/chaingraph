@@ -8,5 +8,5 @@ export type GraphQLSdkProps = {
 	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	options?: any; 
 	url?: string;
-	apiKey: string;
+	apiKey?: string;
 };
