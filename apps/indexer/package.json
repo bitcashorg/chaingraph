@@ -7,8 +7,9 @@
   "author": "blockmatic.io",
   "license": "MIT",
   "scripts": {
-    "dev": "env-cmd ts-node-dev --no-notify --no-deps --respawn src/index",
-    "build": "tsc -b"
+    "dev": "bun run src/index",
+    "build": "tsc -b",
+    "start": "env-cmd -f .env node dist/index.js"
   },
   "devDependencies": {
     "@types/bluebird": "^3.5.36",
@@ -26,7 +27,6 @@
   },
   "dependencies": {
     "@blockmatic/eosio-ship-reader": "^0.5.0",
-    "@eoscafe/hyperion": "^3.3.2",
     "@eosrio/node-abieos": "^2.1.1",
     "@greymass/eosio": "^0.7.0",
     "@wharfkit/antelope": "^1.0.7",

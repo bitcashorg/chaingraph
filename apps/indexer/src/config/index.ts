@@ -20,21 +20,15 @@ export interface EosioReaderConfig {
 
 export interface Config {
   database_url: string
-  delphioracle_producers: string[]
-  hyperion_url: string
   reader: EosioReaderConfig
 }
 
 export const config: Config = {
   database_url: env.get('DATABASE_URL').required().asString(),
-  delphioracle_producers: env
-    .get('DELPHIORACLE_PRODUCERS')
-    .required()
-    .asArray(),
   reader: {
-    chain: 'eos',
+    chain: 'l1',
     chain_id:
-      'aca376f206b8fc25a6ed44dbdc66547c36c6c33e3a119ffbeaef943642f0e906',
+      'e28174b34639a5ba006265f3641c8ffc1021d65c4cd12fbf242e5c6a6fde6a55',
     ws_url: env.get('WS_URL').asString() || 'ws://localhost:8080',
     rpc_url: env.get('RPC_URL').asString() || 'http://localhost:8888',
     irreversible_only: false,
@@ -43,5 +37,4 @@ export const config: Config = {
     ds_threads: 4,
     ds_experimental: false,
   },
-  hyperion_url: env.get('HYPERION_RPC_URL').asString(),
 }
