@@ -7,14 +7,14 @@ export * from "../../generated";
 
 // Server side client
 export function createChaingraphClient({
-	apiKey = "",
+	// apiKey = "",
 	options = {},
 	url = "https://graph.bitcash.org",
 	config = {},
 }: GraphQLSdkProps = {}) {
-	const headers =  {
-		"x-chaingraph-api-key": apiKey,
-	}
+	// const headers =  {
+	// 	"x-chaingraph-api-key": apiKey,
+	// }
 
 	let subscribe;
 
@@ -22,11 +22,11 @@ export function createChaingraphClient({
 		const { subscribe: subscriptions } = createWsClient({
 			url: url.replace("http", "ws"),
 			...options,
-			connectionParams: () => {
-				return {
-					headers,
-				};
-			},
+			// connectionParams: () => {
+			// 	return {
+			// 		headers,
+			// 	};
+			// },
 		});
 		subscribe = subscriptions;
 	}
@@ -35,7 +35,7 @@ export function createChaingraphClient({
 		fetcher: async (operation: GraphqlOperation | GraphqlOperation[]): Promise<{ data?: any; errors?: any[] }> => {
 				const fetchResponse = await fetch(url, {
 					method: "POST",
-					headers,
+					// headers,
 					body: JSON.stringify(operation),
 					...config,
 				}).then((response) => response.json()) as { data?: any; errors?: any[] };
