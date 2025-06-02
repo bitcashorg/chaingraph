@@ -1,6 +1,6 @@
 {
 	"name": "@l1network/chaingraph-genql",
-	"version": "0.1.4",
+	"version": "0.1.5",
 	"type": "module",
 	"description": "chaingraph genql",
 	"publishConfig": {
