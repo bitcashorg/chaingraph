@@ -23,7 +23,7 @@ services:
       HASURA_GRAPHQL_ENABLED_APIS: graphql, metadata
       ## Enable automatic migrations and metadata application
       HASURA_GRAPHQL_MIGRATIONS_SERVER_TIMEOUT: "60"
-      HASURA_GRAPHQL_NO_OF_RETRIES: "5"
+      HASURA_GRAPHQL_ENABLE_TELEMETRY: "false"
       HASURA_GRAPHQL_MIGRATIONS_DIR: /hasura-migrations
       HASURA_GRAPHQL_METADATA_DIR: /hasura-metadata
     volumes:
@@ -44,9 +44,7 @@ services:
       QUARKUS_OPENTELEMETRY_ENABLED: "false"
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8081/api/v1/athena/health"]
-      interval: 5s
+      interval: 50000s
       timeout: 10s
       retries: 5
       start_period: 5s
-
-    
