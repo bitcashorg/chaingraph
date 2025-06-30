@@ -20,7 +20,6 @@
       "version": "1.0.0",
       "dependencies": {
         "@blockmatic/eosio-ship-reader": "^0.5.0",
-        "@eoscafe/hyperion": "^3.3.2",
         "@eosrio/node-abieos": "^2.1.1",
         "@greymass/eosio": "^0.7.0",
         "@wharfkit/antelope": "^1.0.7",
@@ -61,7 +60,7 @@
     },
     "packages/genql": {
       "name": "@l1network/chaingraph-genql",
-      "version": "0.1.0",
+      "version": "0.1.8",
       "dependencies": {
         "@genql/runtime": "^2.10.0",
         "graphql": "^16.10.0",
@@ -127,8 +126,6 @@
     "@colors/colors": ["@colors/colors@1.6.0", "", {}, "sha512-Ir+AOibqzrIsL6ajt3Rz3LskB7OiMVHqltZmspbW/TJuTVuyOMirVqAkjfY6JISiLHgyNqicAC8AyHHGzNd/dA=="],
 
     "@dabh/diagnostics": ["@dabh/diagnostics@2.0.3", "", { "dependencies": { "colorspace": "1.1.x", "enabled": "2.0.x", "kuler": "^2.0.0" } }, "sha512-hrlQOIi7hAfzsMqlGSFyVucrx38O+j6wiGOf//H2ecvIEqYN4ADBSS2iLMh5UFyDunCNniUIPk/q3riFv45xRA=="],
-
-    "@eoscafe/hyperion": ["@eoscafe/hyperion@3.3.2", "", { "dependencies": { "cross-fetch": "^3.1.5" } }, "sha512-tZrhCUp4vnpdUyblI4MvxxSSCTZYsObI1wD3m0LZwKb6oEmDXggkzXxe01XXjxW1mPh/vS6QJZX9JLvFYa/QBw=="],
 
     "@eosrio/node-abieos": ["@eosrio/node-abieos@2.2.0", "", {}, "sha512-fZH/rjka3CgBhVqAQa5YK0oEXCUoiObVL75BPvuKLBFNSkeUbbY5QZ0dmpy7ah+eBArrZ4GMb7x+0DETIgQxwQ=="],
 
@@ -387,8 +384,6 @@
     "consola": ["consola@3.4.2", "", {}, "sha512-5IKcdX0nnYavi6G7TtOhwkYzyjfJlatbjMjuLSfE2kYT5pMDOilZ4OvMhi637CcDICTmz3wARPoyhqyX1Y+XvA=="],
 
     "create-require": ["create-require@1.1.1", "", {}, "sha512-dcKFX3jn0MpIaXjisoRvexIJVEKzaq7z2rZKxf+MSr9TkdmHmsU4m2lcLojrj/FHl8mk5VxMmYA+ftRkP/3oKQ=="],
-
-    "cross-fetch": ["cross-fetch@3.2.0", "", { "dependencies": { "node-fetch": "^2.7.0" } }, "sha512-Q+xVJLoGOeIMXZmbUK4HYk+69cQH6LudR0Vu/pRm2YlU/hDV9CiS0gKUMaWY5f2NeUH9C1nV3bsTlCo0FsTV1Q=="],
 
     "cross-spawn": ["cross-spawn@7.0.6", "", { "dependencies": { "path-key": "^3.1.0", "shebang-command": "^2.0.0", "which": "^2.0.1" } }, "sha512-uV2QOWP2nWzsy2aMp8aRibhi9dlzF5Hgh5SHaB9OiTGEyDTiJJyx0uy51QXdyWbtAHNua4XJzUKca3OzKUd3vA=="],
 

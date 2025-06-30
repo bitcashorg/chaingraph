@@ -1,6 +1,6 @@
 {
 	"name": "@l1network/chaingraph-genql",
-	"version": "0.1.7",
+	"version": "0.1.9",
 	"type": "module",
 	"description": "chaingraph genql",
 	"publishConfig": {
@@ -31,5 +31,11 @@
 		"genql": "^2.0.1",
 		"tsup": "^8.4.0",
 		"typescript": "^5.8.2"
+	},
+	"exports": {
+		".": {
+			"import": "./dist/index.mjs",
+			"require": "./dist/index.cjs"
+		}
 	}
 }
