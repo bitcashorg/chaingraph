@@ -35,7 +35,7 @@ export function createChaingraphClient({
 		url,
 		fetcher: async (operation: GraphqlOperation | GraphqlOperation[]): Promise<{ data?: any; errors?: any[] }> => {
 				console.log('🔍 Chaingraph query to:', url)
-				console.log('🔍 Headers:', headers)
+				// console.log('🔍 Headers:', headers)
 				console.log('🔍 Operation:', JSON.stringify(operation, null, 2))
 				
 				const response = await fetch(url, {
