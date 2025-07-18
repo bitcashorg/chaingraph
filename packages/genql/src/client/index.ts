@@ -32,14 +32,29 @@ export function createChaingraphClient({
 	}
 
 	const client = createClient({
+		url,
 		fetcher: async (operation: GraphqlOperation | GraphqlOperation[]): Promise<{ data?: any; errors?: any[] }> => {
-				const fetchResponse = await fetch(url, {
+				console.log('🔍 Chaingraph query to:', url)
+				console.log('🔍 Headers:', headers)
+				console.log('🔍 Operation:', JSON.stringify(operation, null, 2))
+				
+				const response = await fetch(url, {
 					method: "POST",
 					// headers,
 					body: JSON.stringify(operation),
 					...config,
-				}).then((response) => response.json()) as { data?: any; errors?: any[] };
-
+				});
+				
+				if (!response.ok) {
+					console.error('❌ Chaingraph HTTP error:', response.status, response.statusText)
+					const errorText = await response.text()
+					console.error('❌ Error body:', errorText)
+					throw new Error(`Chaingraph HTTP error: ${response.status} ${response.statusText}`)
+				}
+				
+				const fetchResponse = await response.json() as { data?: any; errors?: any[] };
+				console.log('✅ Chaingraph response:', JSON.stringify(fetchResponse, null, 2))
+				
 				return fetchResponse;
 		},
 	});
