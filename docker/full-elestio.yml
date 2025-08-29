@@ -1,0 +1,89 @@
+# Chaingraph stack: Postgres + Hasura (with auto-migrations) + Indexer (Bun)
+# Uses env from .env placed next to this file.
+
+networks:
+  chaingraph:
+    driver: bridge
+
+volumes:
+  pg_data:
+
+services:
+  db:
+    image: postgres:15
+    restart: unless-stopped
+    networks: [chaingraph]
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+
+  hasura:
+    # cli-migrations-v3 auto-applies migrations & metadata at start
+    image: hasura/graphql-engine:${HASURA_IMAGE_TAG:-latest}.cli-migrations-v3
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+    networks: [chaingraph]
+    ports:
+      - "${HASURA_PORT:-3333}:8080"
+    environment:
+      HASURA_GRAPHQL_ENABLE_CONSOLE: ${HASURA_GRAPHQL_ENABLE_CONSOLE:-true}
+      HASURA_GRAPHQL_DEV_MODE: ${HASURA_GRAPHQL_DEV_MODE:-true}
+      HASURA_GRAPHQL_ADMIN_SECRET: ${HASURA_GRAPHQL_ADMIN_SECRET}
+      HASURA_GRAPHQL_UNAUTHORIZED_ROLE: ${HASURA_GRAPHQL_UNAUTHORIZED_ROLE:-public}
+      # Hasura metadata DB (can be the same Postgres)
+      HASURA_GRAPHQL_METADATA_DATABASE_URL: ${HASURA_GRAPHQL_METADATA_DATABASE_URL}
+      # (Optional) expose your app DB to Hasura via env; connect it in Console as "From env var"
+      PG_DATABASE_URL: ${PG_DATABASE_URL}
+      # Reduce noisy logs in prod if desired
+      HASURA_GRAPHQL_ENABLED_LOG_TYPES: ${HASURA_GRAPHQL_ENABLED_LOG_TYPES:-startup, http-log, webhook-log, websocket-log, query-log}
+    volumes:
+      # Mount your Hasura project so cli-migrations can auto-apply
+      - ./apps/hasura/migrations:/hasura-migrations
+      - ./apps/hasura/metadata:/hasura-metadata
+      # If you vend console assets locally, uncomment:
+      # - ./apps/hasura/console-assets:/srv/console-assets
+
+    healthcheck:
+      # /healthz is the canonical liveness endpoint; strict=true also checks DB
+      test: ["CMD", "curl", "-fsS", "http://localhost:8080/healthz?strict=true"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+
+  indexer:
+    # Runs the Antelope (EOSIO) Chaingraph indexer from the repo using Bun
+    image: oven/bun:1.1
+    working_dir: /srv/apps/indexer
+    command: >
+      bash -lc "
+      bun install &&
+      bun run start
+      "
+    restart: unless-stopped
+    networks: [chaingraph]
+    depends_on:
+      - db
+      - hasura
+    environment:
+      # DB where the indexer writes chain data
+      PG_DATABASE_URL: ${PG_DATABASE_URL}
+      # SHiP websocket endpoint of your nodeos (ws:// or wss://)
+      SHIP_WS_URL: ${SHIP_WS_URL}
+      # Chain info & indexing params (adjust to your network)
+      CHAIN_ID: ${CHAIN_ID}
+      INDEX_FROM_BLOCK: ${INDEX_FROM_BLOCK:-0}
+      # If your indexer reads custom mappings, point it here
+      MAPPINGS_DIR: ${MAPPINGS_DIR:-/srv/packages/mappings}
+    volumes:
+      - ./:/srv
