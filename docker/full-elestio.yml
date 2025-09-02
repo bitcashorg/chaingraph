@@ -46,6 +46,8 @@ services:
       HASURA_GRAPHQL_METADATA_DATABASE_URL: ${HASURA_GRAPHQL_METADATA_DATABASE_URL}
       # (Optional) expose your app DB to Hasura via env; connect it in Console as "From env var"
       PG_DATABASE_URL: ${PG_DATABASE_URL}
+      # Primary source connection string expected by metadata ("default")
+      HASURA_GRAPHQL_DATABASE_URL: ${PG_DATABASE_URL}
       # Reduce noisy logs in prod if desired
       HASURA_GRAPHQL_ENABLED_LOG_TYPES: ${HASURA_GRAPHQL_ENABLED_LOG_TYPES:-startup, http-log, webhook-log, websocket-log, query-log}
     volumes:
@@ -70,6 +72,7 @@ services:
     command: >
       bash -lc "
       bun install &&
+      bun run build &&
       bun run start
       "
     restart: unless-stopped
@@ -91,3 +94,4 @@ services:
       MAPPINGS_DIR: ${MAPPINGS_DIR:-/srv/packages/mappings}
     volumes:
       - ../:/srv
+      - ../.env:/srv/apps/indexer/.env:ro
