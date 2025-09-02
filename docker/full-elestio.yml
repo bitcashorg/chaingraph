@@ -50,10 +50,10 @@ services:
       HASURA_GRAPHQL_ENABLED_LOG_TYPES: ${HASURA_GRAPHQL_ENABLED_LOG_TYPES:-startup, http-log, webhook-log, websocket-log, query-log}
     volumes:
       # Mount your Hasura project so cli-migrations can auto-apply
-      - ./apps/hasura/migrations:/hasura-migrations
-      - ./apps/hasura/metadata:/hasura-metadata
+      - ../apps/hasura/migrations:/hasura-migrations
+      - ../apps/hasura/metadata:/hasura-metadata
       # If you vend console assets locally, uncomment:
-      # - ./apps/hasura/console-assets:/srv/console-assets
+      # - ../apps/hasura/console-assets:/srv/console-assets
 
     healthcheck:
       # /healthz is the canonical liveness endpoint; strict=true also checks DB
@@ -90,4 +90,4 @@ services:
       # If your indexer reads custom mappings, point it here
       MAPPINGS_DIR: ${MAPPINGS_DIR:-/srv/packages/mappings}
     volumes:
-      - ./:/srv
+      - ../:/srv
