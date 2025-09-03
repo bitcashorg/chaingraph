@@ -95,3 +95,37 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md) for development guidelines.
 
 MIT License
 
+**Full Stack (Docker/Elestio)**
+- Env file: place your environment in the repo root `./.env` (Elestio CI/CD injects env here). The compose file reads from it for both variable substitution and runtime envs.
+- Start stack: from repo root run `pnpm run full:start` (or `docker compose --env-file .env -f docker/full-elestio.yml -p chaingraph up --build -d`).
+- Logs: `pnpm run full:logs` or `docker compose --env-file .env -f docker/full-elestio.yml -p chaingraph logs -f`.
+- Stop/clean: `pnpm run full:stop` / `pnpm run full:down`.
+- Hasura Console: `http://<host>:3333/console` (header `x-hasura-admin-secret: <HASURA_GRAPHQL_ADMIN_SECRET>`). GraphQL API at `http://<host>:3333/v1/graphql`.
+- Required envs (examples in `docker/.env_elestio_example`):
+  - `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB`
+  - `PG_DATABASE_URL` (e.g., `postgres://user:pass@db:5432/dbname`)
+  - `HASURA_GRAPHQL_METADATA_DATABASE_URL` (can reuse `PG_DATABASE_URL`)
+  - `HASURA_GRAPHQL_ADMIN_SECRET`
+  - `SHIP_WS_URL` (SHiP websocket, e.g., `wss://...`)
+  - `RPC_URL` (HTTP RPC endpoint for `/v1/chain/get_info`)
+  - `CHAIN_ID` (network chain id)
+  - `CHAIN_NAME` (optional; defaults to `l1`)
+  - `INDEX_FROM_BLOCK` (optional; `0` for earliest, or specific height)
+- Indexer behavior: on start it upserts the `chains` row (using `CHAIN_NAME`, `CHAIN_ID`, `RPC_URL`) and begins streaming from `INDEX_FROM_BLOCK` if set, otherwise from node head. It writes into `blocks`, `transactions`, `actions`, `table_rows`.
+- Database checks:
+  - Shell: `docker compose -f docker/full-elestio.yml exec -it db psql -U $POSTGRES_USER -d $POSTGRES_DB`
+  - Quick queries: `SELECT chain_name, chain_id FROM chains;` • `SELECT COUNT(*), MAX(block_num) FROM blocks;` • `SELECT COUNT(*) FROM actions;`.
+- Linux host RPC: if your RPC runs on the host, set `RPC_URL=http://host.docker.internal:8888` and add under `indexer`:
+  - `extra_hosts: ["host.docker.internal:host-gateway"]` in `docker/full-elestio.yml`.
+
+**Elestio Deploy**
+- Configure envs in Elestio CI/CD (Project Settings → Environment). Use `docker/.env_elestio_example` as a reference. At minimum set: `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB`, `PG_DATABASE_URL`, `HASURA_GRAPHQL_ADMIN_SECRET`, `HASURA_GRAPHQL_METADATA_DATABASE_URL`, `SHIP_WS_URL`, `RPC_URL`, `CHAIN_ID`, optionally `CHAIN_NAME`, `INDEX_FROM_BLOCK`.
+- Build/Run: have Elestio execute from the repo root either:
+  - `docker compose -f docker/full-elestio.yml -p chaingraph up -d` (envs come from CI/CD environment), or
+  - `docker compose --env-file .env -f docker/full-elestio.yml -p chaingraph up -d` if you also commit a `.env` in the repo root.
+- Ports: expose TCP 3333 publicly (maps to Hasura 8080). Optionally front with your domain/proxy.
+- Verify after deploy:
+  - Health: `curl http://<host>:3333/healthz`
+  - Console: `http://<host>:3333/console` with header `x-hasura-admin-secret: ...`
+  - Logs (via SSH): `docker compose -f docker/full-elestio.yml logs -f indexer hasura db`
+- Persistence: the named volume `pg_data` holds Postgres data across deploys. Remove with caution if you need a clean reset (`docker volume rm <project>_pg_data`).

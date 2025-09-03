@@ -3,6 +3,7 @@ import {
   createEosioShipReader,
 } from '@blockmatic/eosio-ship-reader'
 import { config } from '../config'
+import { logger } from '../lib/logger'
 import { getInfo } from '../lib/eosio'
 import type { MappingsReader } from '../mappings'
 import type { WhitelistReader } from '../whitelist'
@@ -20,7 +21,8 @@ export const loadReader = async (
 
   const readerConfig = config.reader
   const start_block_num =
-    readerConfig.start_block || (await getInfo()).head_block_num
+    readerConfig.start_block ?? (await getInfo()).head_block_num
+  logger.info(`Starting SHiP from block ${start_block_num}`)
 
   const eosioReaderConfig: EosioReaderConfig = {
     ws_url: readerConfig.ws_url,

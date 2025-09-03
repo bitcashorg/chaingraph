@@ -7,6 +7,7 @@ import type {
 import { db } from './db'
 import {
   createDeleteTableRowsQuery,
+  createUpsertChainQuery,
   createUpsertActionsQuery,
   createUpsertBlocksQuery,
   createUpsertTableRowsQuery,
@@ -48,3 +49,9 @@ export const upsertActions = async (actions: ChainGraphAction[]) => {
   if (!actions.length) return Promise.resolve()
   return runQuery(createUpsertActionsQuery(actions))
 }
+
+export const upsertChain = async (
+  chain_name: string,
+  chain_id: string,
+  rpc_url: string,
+) => runQuery(createUpsertChainQuery(chain_name, chain_id, rpc_url))

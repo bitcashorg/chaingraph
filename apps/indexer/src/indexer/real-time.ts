@@ -29,12 +29,22 @@ export const startRealTimeStreaming = async (
 	// this stream contains only the blocks that are relevant to the whitelisted contract tables and actions
 	blocks$.subscribe(async (block) => {
 		try {
+			const table_rows = Array.isArray((block as any).table_rows)
+				? (block as any).table_rows
+				: [];
+			const transactionsArr = Array.isArray((block as any).transactions)
+				? (block as any).transactions
+				: [];
+			const actionsArr = Array.isArray((block as any).actions)
+				? (block as any).actions
+				: [];
+
 			logger.info(
-				`Processed block ${block.block_num}. Transactions: ${block.transactions.length}, actions ${block.actions.length}, table rows ${block.table_rows.length} `,
+				`Processed block ${block.block_num}. Transactions: ${transactionsArr.length}, actions ${actionsArr.length}, table rows ${table_rows.length} `,
 			);
 
 			// insert table_rows and filtering them by unique p_key to avoid duplicates and real-time crash
-			const tableRowsDeltas = block.table_rows
+			const tableRowsDeltas = table_rows
 				.filter((row) => {
 					logger.warn("> The received row =>", { row });
 					return (
@@ -50,7 +60,7 @@ export const startRealTimeStreaming = async (
 			}
 
 			// delete table_rows
-			const deleted_table_rows = block.table_rows
+			const deleted_table_rows = table_rows
 				.filter((row) => !row.present)
 				.map((row) => getChainGraphTableRowData(row, mappingsReader));
 
@@ -67,7 +77,7 @@ export const startRealTimeStreaming = async (
 			await upsertBlocks([{ ...blockData, chain: config.reader.chain }]);
 
 			// insert transaction data
-			const transactions = block.transactions.map((trx) => ({
+			const transactions = transactionsArr.map((trx) => ({
 				...trx,
 				chain: config.reader.chain,
 				block_num: block.block_num,
@@ -78,7 +88,7 @@ export const startRealTimeStreaming = async (
 				await upsertTransactions(transactions);
 
 				// insert action traces
-				const actions: ChainGraphAction[] = block.actions.map((action) => ({
+				const actions: ChainGraphAction[] = actionsArr.map((action) => ({
 					chain: config.reader.chain,
 					transaction_id: action.transaction_id,
 					contract: action.account,

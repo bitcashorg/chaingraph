@@ -2,8 +2,16 @@ import { createMappingsReader } from '../mappings'
 import { createWhitelistReader } from '../whitelist'
 import { loadCurrentTableState } from './load-state'
 import { startRealTimeStreaming } from './real-time'
+import { upsertChain } from '../database'
+import { config } from '../config'
 
 export const startIndexer = async () => {
+  // Ensure the chain exists to satisfy FK constraints
+  await upsertChain(
+    config.reader.chain,
+    config.reader.chain_id,
+    config.reader.rpc_url,
+  )
   // get instances of the mappings and whitelist readers
   // these subscribe to mappings and whitelists on db and it always returns the latest state of it
   const mappingsReader = await createMappingsReader()

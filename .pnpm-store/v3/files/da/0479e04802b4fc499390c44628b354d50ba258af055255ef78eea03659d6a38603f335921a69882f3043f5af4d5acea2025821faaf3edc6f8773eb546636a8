@@ -1,0 +1,41 @@
+{
+  "name": "node-worker-threads-pool",
+  "version": "1.4.3",
+  "description": "Simple worker threads pool using Node's worker_threads module. Compatible with ES6+ Promise, Async/Await.",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "scripts": {
+    "test": "jest --coverage"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SUCHMOKUO/node-worker-threads-pool.git"
+  },
+  "keywords": [
+    "nodejs",
+    "async",
+    "promise",
+    "worker_threads",
+    "worker",
+    "thread",
+    "pool",
+    "threadpool",
+    "multi threading",
+    "typescript"
+  ],
+  "author": "mokuo",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/SUCHMOKUO/node-worker-threads-pool/issues"
+  },
+  "homepage": "https://github.com/SUCHMOKUO/node-worker-threads-pool#readme",
+  "dependencies": {},
+  "devDependencies": {
+    "@types/jest": "^26.0.5",
+    "@types/node": "^14.0.23",
+    "husky": "^4.2.5",
+    "jest": "^24.9.0",
+    "prettier": "^2.0.5",
+    "pretty-quick": "^2.0.1"
+  }
+}

@@ -1,0 +1,13 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.serialize = void 0;
+const eosjs_1 = require("eosjs");
+const util_1 = require("util");
+const encoding = { textEncoder: new util_1.TextEncoder(), textDecoder: new util_1.TextDecoder() };
+const serialize = (type, value, types) => {
+    const buffer = new eosjs_1.Serialize.SerialBuffer(encoding);
+    eosjs_1.Serialize.getType(types, type).serialize(buffer, value);
+    return buffer.asUint8Array();
+};
+exports.serialize = serialize;
+//# sourceMappingURL=serializer.js.map
