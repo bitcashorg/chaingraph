@@ -39,4 +39,6 @@ yarn-error.log*
 *.pem
 __dev
 .temp
-.turbo
+.turbo.pnpm-store/
+.pnpm-store/
+.pnpm-store/
