@@ -82,12 +82,13 @@ services:
       # Map envs expected by indexer config
       DATABASE_URL: ${PG_DATABASE_URL}
       WS_URL: ${SHIP_WS_URL}
+      WS_URL_BACKUP: ${SHIP_WS_URL_BACKUP}
       RPC_URL: ${RPC_URL:-http://localhost:8888}
+      RPC_URL_BACKUP: ${RPC_URL_BACKUP}
       # Keep other envs available in case they are used elsewhere
       PG_DATABASE_URL: ${PG_DATABASE_URL}
       SHIP_WS_URL: ${SHIP_WS_URL}
       CHAIN_ID: ${CHAIN_ID}
-      INDEX_FROM_BLOCK: ${INDEX_FROM_BLOCK:-0}
       MAPPINGS_DIR: ${MAPPINGS_DIR:-/srv/packages/mappings}
     volumes:
       - ../:/srv

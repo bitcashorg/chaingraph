@@ -107,14 +107,36 @@ MIT License
   - `HASURA_GRAPHQL_METADATA_DATABASE_URL` (can reuse `PG_DATABASE_URL`)
   - `HASURA_GRAPHQL_ADMIN_SECRET`
   - `SHIP_WS_URL` (SHiP websocket, e.g., `wss://...`)
+  - `SHIP_WS_URL_BACKUP` (optional; backup SHiP websocket used for failover)
   - `RPC_URL` (HTTP RPC endpoint for `/v1/chain/get_info`)
+  - `RPC_URL_BACKUP` (optional; backup HTTP RPC endpoint used for failover)
   - `CHAIN_ID` (network chain id)
   - `CHAIN_NAME` (optional; defaults to `l1`)
-  - `INDEX_FROM_BLOCK` (optional; `0` for earliest, or specific height)
-- Indexer behavior: on start it upserts the `chains` row (using `CHAIN_NAME`, `CHAIN_ID`, `RPC_URL`) and begins streaming from `INDEX_FROM_BLOCK` if set, otherwise from node head. It writes into `blocks`, `transactions`, `actions`, `table_rows`.
+  - `INDEX_FROM_BLOCK` (optional): if DB is empty, starts exactly here (`0` allowed for genesis). If DB has data, it triggers a backfill of only the missing earlier slice (see behavior below).
+- Indexer behavior: on start it upserts the `chains` row (using `CHAIN_NAME`, `CHAIN_ID`, `RPC_URL`). Then:
+  - Internal gaps: automatically backfills any internal missing block ranges detected in the DB for your `CHAIN_NAME`.
+  - Env-driven backfill: if `INDEX_FROM_BLOCK` is set and ≤ DB tip, the indexer backfills from `INDEX_FROM_BLOCK` up to the current DB tip (re-processing that range as needed). If `INDEX_FROM_BLOCK` is earlier than the earliest indexed block, it also includes that earlier slice. All backfill ranges are clamped to be ≥ `INDEX_FROM_BLOCK`.
+- Skip ahead: if `INDEX_FROM_BLOCK` is set and > DB tip, the indexer skips backfill and starts realtime at `INDEX_FROM_BLOCK`.
+  - Head clamp: if the requested start/end exceed the chain head height, the indexer logs a warning and clamps to the current head (SHiP cannot stream future blocks).
+  - Real-time: after backfill (when applicable), the indexer starts real-time from `DB tip + 1`.
+  - Empty DB: if the DB is empty and `INDEX_FROM_BLOCK` is not set, it starts from the node head.
+  It writes into `blocks`, `transactions`, `actions`, `table_rows`.
+
+Failover behavior
+- SHiP (state history): set `SHIP_WS_URL` and optional `SHIP_WS_URL_BACKUP`.
+  - Realtime failover: if primary errors/closes, auto-reconnects to backup. On next reconnect event, prefers primary again.
+  - Backfill failover: missing-range backfills also use SHiP failover and resume the range from the last processed block after reconnecting.
+- RPC (HTTP): set `RPC_URL` and optional `RPC_URL_BACKUP`.
+  - All RPC calls (e.g., `get_info`, `get_abi`, `get_table_by_scope`, `get_table_rows`) try the active endpoint; on failure they automatically switch to the alternate and succeed if available.
+  - When running on backup, the next call will attempt the primary first to fail back automatically.
 - Database checks:
   - Shell: `docker compose -f docker/full-elestio.yml exec -it db psql -U $POSTGRES_USER -d $POSTGRES_DB`
-  - Quick queries: `SELECT chain_name, chain_id FROM chains;` • `SELECT COUNT(*), MAX(block_num) FROM blocks;` • `SELECT COUNT(*) FROM actions;`.
+  - Quick queries:
+    - Chains: `SELECT chain_name, chain_id FROM chains;`
+    - DB tip: `SELECT MAX(block_num) FROM blocks WHERE chain = '$CHAIN_NAME';`
+    - Earliest: `SELECT MIN(block_num) FROM blocks WHERE chain = '$CHAIN_NAME';`
+    - Missing ranges:
+      `SELECT block_num+1 AS missing_start, next-1 AS missing_end FROM (SELECT block_num, LEAD(block_num) OVER (ORDER BY block_num) AS next FROM blocks WHERE chain='$CHAIN_NAME') s WHERE next > block_num + 1;`
 - Linux host RPC: if your RPC runs on the host, set `RPC_URL=http://host.docker.internal:8888` and add under `indexer`:
   - `extra_hosts: ["host.docker.internal:host-gateway"]` in `docker/full-elestio.yml`.
 
@@ -129,3 +151,5 @@ MIT License
   - Console: `http://<host>:3333/console` with header `x-hasura-admin-secret: ...`
   - Logs (via SSH): `docker compose -f docker/full-elestio.yml logs -f indexer hasura db`
 - Persistence: the named volume `pg_data` holds Postgres data across deploys. Remove with caution if you need a clean reset (`docker volume rm <project>_pg_data`).
+Notes
+- Avoid quoting URLs in env files (use `RPC_URL=https://...`, not `RPC_URL="https://..."`). Some runners pass quotes through, producing invalid URLs.
