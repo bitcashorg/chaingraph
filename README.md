@@ -112,10 +112,13 @@ MIT License
   - `RPC_URL_BACKUP` (optional; backup HTTP RPC endpoint used for failover)
   - `CHAIN_ID` (network chain id)
   - `CHAIN_NAME` (optional; defaults to `l1`)
-  - `INDEX_FROM_BLOCK` (optional): if DB is empty, starts exactly here (`0` allowed for genesis). If DB has data, it triggers a backfill of only the missing earlier slice (see behavior below).
+  - `INDEX_FROM_BLOCK` (optional): if DB is empty, starts exactly here (`0` allowed for genesis). If DB has data, it serves as a lower bound for backfills (see behavior below).
+  - `REPROCESS_FROM_ENV` (optional, default `false`): when `true` and `INDEX_FROM_BLOCK` ≤ DB tip, also reprocesses the entire `[INDEX_FROM_BLOCK..tip]` range. When `false`, only internal gaps and any slice earlier than the earliest indexed block are backfilled.
+  - `TABLE_ROWS_PAGE_LIMIT` (optional, default `100000`): page size used when loading current table state via `get_table_rows`.
+  - `NODE_OPTIONS` (optional): override Node heap (compose defaults to `--max-old-space-size=3584`).
 - Indexer behavior: on start it upserts the `chains` row (using `CHAIN_NAME`, `CHAIN_ID`, `RPC_URL`). Then:
   - Internal gaps: automatically backfills any internal missing block ranges detected in the DB for your `CHAIN_NAME`.
-  - Env-driven backfill: if `INDEX_FROM_BLOCK` is set and ≤ DB tip, the indexer backfills from `INDEX_FROM_BLOCK` up to the current DB tip (re-processing that range as needed). If `INDEX_FROM_BLOCK` is earlier than the earliest indexed block, it also includes that earlier slice. All backfill ranges are clamped to be ≥ `INDEX_FROM_BLOCK`.
+  - Env-driven backfill: if `INDEX_FROM_BLOCK` is set and ≤ DB tip, the indexer always includes any slice earlier than the earliest indexed block. To force reprocessing of the full `[INDEX_FROM_BLOCK..tip]` range, set `REPROCESS_FROM_ENV=true`.
 - Skip ahead: if `INDEX_FROM_BLOCK` is set and > DB tip, the indexer skips backfill and starts realtime at `INDEX_FROM_BLOCK`.
   - Head clamp: if the requested start/end exceed the chain head height, the indexer logs a warning and clamps to the current head (SHiP cannot stream future blocks).
   - Real-time: after backfill (when applicable), the indexer starts real-time from `DB tip + 1`.
