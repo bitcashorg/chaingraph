@@ -87,72 +87,99 @@ export const loadCurrentTableState = async (
         if (scopes.length === 0) return
         // tables rows requests for this table
         async function fn(scope: string) {
-          let rows: EosioReaderTableRow[]
-          try {
-        const response = await throttledGetTableRows({
-          contract,
-          scope,
-          table,
-        })
-            rows = response.rows
-          } catch (error) {
-            console.error(
-              '====================== Failed to get Table Rows ======================= \n',
-              error,
-              '\n=============================================',
-            )
-            console.trace(
-              '====================== Error Trace ======================= \n',
-              error,
-            )
-          }
-
-          // for each row get the right format for ChainGraph
-          const tableDataDeltas = rows.map((row) =>
-            getChainGraphTableRowData(
-              {
-                primary_key: '0', // also fixed cos getChainGraphTableRowData determines the real primary_key value
-                present: '2', // fixed cos it always exist, it will never be a deletion
-                code: contract,
-                table,
+          const PAGE_LIMIT = parseInt(
+            (process.env.TABLE_ROWS_PAGE_LIMIT as string) ?? '100000',
+            10,
+          )
+          let lower_bound: string | undefined = undefined
+          let page = 0
+          // Iterate pages and upsert per chunk to keep memory bounded
+          for (;;) {
+            page += 1
+            let response: any
+            try {
+              response = await throttledGetTableRowsPage({
+                contract,
                 scope,
-                value: row,
-              },
-              mappingsReader,
-            ),
-          )
-          const tableData = tableDataDeltas.filter(
-            (row) => row.contract !== 'delphioracle',
-          )
+                table,
+                limit: PAGE_LIMIT,
+                lower_bound,
+              })
+            } catch (error) {
+              console.error(
+                '====================== Failed to get Table Rows Page ======================= \n',
+                { contract, table, scope, lower_bound, page, limit: PAGE_LIMIT },
+                error,
+                '\n=============================================',
+              )
+              console.trace(
+                '====================== Error Trace ======================= \n',
+                error,
+              )
+              break
+            }
 
-          // NOTE: not sure why I'm getting duplicated rows.
-          const unique_row_deltas: any[] = _.uniqBy(tableData, (row) => {
-            return (
-              row.chain + row.contract + row.table + row.scope + row.primary_key
+            const rows: EosioReaderTableRow[] = response.rows ?? []
+            if (!rows.length) {
+              if (!response?.more) break
+            }
+
+            // Map rows to ChainGraph shape
+            const tableDataDeltas = rows.map((row) =>
+              getChainGraphTableRowData(
+                {
+                  primary_key: '0', // getChainGraphTableRowData determines real primary_key
+                  present: '2', // existing rows, not deletions
+                  code: contract,
+                  table,
+                  scope,
+                  value: row,
+                },
+                mappingsReader,
+              ),
             )
-          })
 
-          return unique_row_deltas
+            // Filter unwanted contracts
+            const tableData = tableDataDeltas.filter(
+              (row) => row.contract !== 'delphioracle',
+            )
+
+            // Optional per-chunk dedupe
+            const unique_row_deltas: ChainGraphTableRow[] = _.uniqBy(
+              tableData,
+              (row) =>
+                row.chain + row.contract + row.table + row.scope + row.primary_key,
+            ) as any
+
+            // Filter invalid primary keys before upsert
+            const filtered_rows = unique_row_deltas.filter(
+              (row) =>
+                row.primary_key &&
+                !row.primary_key
+                  .toString()
+                  .normalize()
+                  .toLowerCase()
+                  .match(/(undefined|\[object object\])g/),
+            )
+
+            if (filtered_rows.length > 0) {
+              await upsertTableRows(filtered_rows)
+            }
+
+            // Advance pagination
+            if (!response.more) break
+            // Support both EOSIO styles: boolean + next_key or string in more
+            lower_bound =
+              (response.next_key as string | undefined) ||
+              (typeof response.more === 'string' ? (response.more as string) : undefined)
+            if (!lower_bound) break
+          }
         }
 
-        // get all table rows acrross all scope flat them out on all_rows array
-        const all_rows: ChainGraphTableRow[] = (
-          await Promise.map(scopes as any, fn, { concurrency: 1 })
-        ).flat()
-        // upsert all table rows on the database
-        const all_filtered_rows = all_rows.filter(
-          (row) =>
-            row.primary_key &&
-            !row.primary_key
-              .toString()
-              .normalize()
-              .toLowerCase()
-              .match(/(undefined|\[object object\])g/),
-        )
+        // Walk all scopes sequentially (bounded by concurrency: 1)
+        await Promise.map(scopes as any, fn, { concurrency: 1 })
 
-        await upsertTableRows(all_filtered_rows)
-
-        // logger.info(`Loaded state for ${JSON.stringify(all_rows.filter(f => f), null, 2)}!`)
+        // logger.info(`Loaded state for ${contract}:${table}`)
       },
       { concurrency: 1 },
     )
@@ -168,27 +195,36 @@ const throttleRequest = pThrottle({
   interval: 500,
 })
 
-const throttledGetTableRows = throttleRequest(
+const throttledGetTableRowsPage = throttleRequest(
   async ({
     contract,
     table,
     scope,
+    limit,
+    lower_bound,
   }: {
     contract: string
     table: string
     scope: string
+    limit: number
+    lower_bound?: string
   }) => {
     logger.info(
-      `===> throttledGetTableRows for ${contract}:${table} with scope ${scope}`,
+      `===> get_table_rows page for ${contract}:${table} scope=${scope} limit=${limit} lb=${lower_bound ?? ''}`,
     )
-    const response = await rpcCall((client) => client.v1.chain.get_table_rows({
-      code: contract,
-      scope,
-      table,
-      limit: 10000000,
-    }))
+    const response = await rpcCall((client) =>
+      client.v1.chain.get_table_rows(
+        {
+          code: contract,
+          scope,
+          table,
+          limit,
+          lower_bound,
+        } as any,
+      ),
+    )
     logger.info(
-      `===> response for ${contract}:${table} with scope ${scope}, ${response.rows.length}`,
+      `===> page received ${contract}:${table} scope=${scope} rows=${response?.rows?.length ?? 0} more=${response?.more}`,
     )
     return response
   },

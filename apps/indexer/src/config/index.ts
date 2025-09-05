@@ -22,11 +22,15 @@ export interface EosioReaderConfig {
 
 export interface Config {
   database_url: string
+  // When true and INDEX_FROM_BLOCK <= DB tip, backfill reprocesses from INDEX_FROM_BLOCK..tip
+  // When false, only internal gaps and earlier-than-earliest ranges are backfilled
+  reprocess_from_env: boolean
   reader: EosioReaderConfig
 }
 
 export const config: Config = {
   database_url: env.get('DATABASE_URL').required().asString(),
+  reprocess_from_env: env.get('REPROCESS_FROM_ENV').default('false').asBool(),
   reader: {
     chain: env.get('CHAIN_NAME').asString() || 'l1',
     chain_id: env.get('CHAIN_ID').required().asString(),

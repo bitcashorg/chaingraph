@@ -85,6 +85,9 @@ services:
     # Install pnpm explicitly (avoid corepack reading bun packageManager), build, run
     command: ["sh", "-lc", "npm i -g pnpm@9 && pnpm i --frozen-lockfile=false && pnpm run build && node dist/index.js"]
     restart: unless-stopped
+    # Keep memory bounded in compose (non-swarm)
+    mem_reservation: 3g
+    mem_limit: 5g
     networks: [chaingraph]
     # Bound container logs to prevent disk growth
     logging:
@@ -108,11 +111,6 @@ services:
       PG_DATABASE_URL: ${PG_DATABASE_URL}
       SHIP_WS_URL: ${SHIP_WS_URL}
       CHAIN_ID: ${CHAIN_ID}
-      INDEX_FROM_BLOCK: ${INDEX_FROM_BLOCK:-0}
-      # Increase Node.js heap to avoid OOM during heavy indexing
-      # Override via env var if needed, e.g. NODE_OPTIONS=--max-old-space-size=8192
-      NODE_OPTIONS: ${NODE_OPTIONS:---max-old-space-size=4096}
-      # If your indexer reads custom mappings, point it here
       MAPPINGS_DIR: ${MAPPINGS_DIR:-/srv/packages/mappings}
     volumes:
       - ../:/srv

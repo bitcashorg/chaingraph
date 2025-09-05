@@ -44,7 +44,11 @@ export const backfillMissingRanges = async (
   // Force reprocessing from envStart up to current DB tip when envStart is set and DB has data
   const latest = await getLatestIndexedBlockNum(chain)
   const forceEnvRange =
-    typeof envStart === 'number' && Number.isFinite(envStart) && latest != null && envStart <= latest
+    config.reprocess_from_env &&
+    typeof envStart === 'number' &&
+    Number.isFinite(envStart) &&
+    latest != null &&
+    envStart <= latest
       ? [{ start: envStart, end: latest }]
       : []
 
