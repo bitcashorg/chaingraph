@@ -45,3 +45,7 @@
     "pre-commit": "bun run hooks:pre-commit"
   }
 }
+    "full:start": "docker compose --env-file .env -f docker/full-elestio.yml -p chaingraph up --build -d",
+    "full:stop": "docker compose -f docker/full-elestio.yml -p chaingraph stop",
+    "full:down": "docker compose -f docker/full-elestio.yml -p chaingraph down -v --remove-orphans",
+    "full:logs": "docker compose --env-file .env -f docker/full-elestio.yml -p chaingraph logs -f",

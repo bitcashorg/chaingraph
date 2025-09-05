@@ -91,6 +91,17 @@ export const createUpsertActionsQuery = (actions: ChainGraphAction[]) =>
     actionsColumnSet,
   )} ON CONFLICT ON CONSTRAINT actions_pkey DO NOTHING`
 
+// Chains
+export const createUpsertChainQuery = (
+  chain_name: string,
+  chain_id: string,
+  rpc_endpoint: string,
+) =>
+  pgp.as.format(
+    'INSERT INTO chains (chain_name, chain_id, rpc_endpoint) VALUES ($1, $2, $3) ON CONFLICT (chain_name) DO UPDATE SET chain_id = EXCLUDED.chain_id, rpc_endpoint = EXCLUDED.rpc_endpoint',
+    [chain_name, chain_id, rpc_endpoint],
+  )
+
 export const createDeleteTableRowsQuery = (
   table_rows: ChainGraphTableRow[],
 ) => {

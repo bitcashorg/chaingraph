@@ -4,7 +4,7 @@ import Promise from 'bluebird'
 import _ from 'lodash'
 import pThrottle from 'p-throttle'
 import { upsertTableRows } from '../database'
-import { rpc } from '../lib/eosio'
+import { rpcCall } from '../lib/eosio'
 import { logger } from '../lib/logger'
 import type { MappingsReader } from '../mappings'
 import type { ChainGraphTableRow, ChainGraphTableWhitelist } from '../types'
@@ -23,7 +23,7 @@ const getTableScopes = async (code: string, table: string) => {
   // biome-ignore lint/suspicious/noImplicitAnyLet: <explanation>
   let response
   try {
-    response = await rpc.v1.chain.get_table_by_scope(params)
+    response = await rpcCall((client) => client.v1.chain.get_table_by_scope(params))
   } catch (error) {
     console.log(params)
     console.log(error)
@@ -89,11 +89,11 @@ export const loadCurrentTableState = async (
         async function fn(scope: string) {
           let rows: EosioReaderTableRow[]
           try {
-            const response = await throttledGetTableRows({
-              contract,
-              scope,
-              table,
-            })
+        const response = await throttledGetTableRows({
+          contract,
+          scope,
+          table,
+        })
             rows = response.rows
           } catch (error) {
             console.error(
@@ -181,12 +181,12 @@ const throttledGetTableRows = throttleRequest(
     logger.info(
       `===> throttledGetTableRows for ${contract}:${table} with scope ${scope}`,
     )
-    const response = await rpc.v1.chain.get_table_rows({
+    const response = await rpcCall((client) => client.v1.chain.get_table_rows({
       code: contract,
       scope,
       table,
       limit: 10000000,
-    })
+    }))
     logger.info(
       `===> response for ${contract}:${table} with scope ${scope}, ${response.rows.length}`,
     )

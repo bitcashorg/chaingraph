@@ -19,7 +19,7 @@ services:
         max-size: "10m"
         max-file: "3"
     env_file:
-      - ../.env
+      - ./../.env
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -47,7 +47,7 @@ services:
         max-size: "10m"
         max-file: "3"
     env_file:
-      - ../.env
+      - ./../.env
     ports:
       - "${HASURA_PORT:-3333}:8080"
     environment:
@@ -79,15 +79,11 @@ services:
       start_period: 20s
 
   indexer:
-    # Runs the Antelope (EOSIO) Chaingraph indexer from the repo using Bun
-    image: oven/bun:1.1
+    # Runs the Antelope (EOSIO) Chaingraph indexer using Node (bookworm has newer libstdc++)
+    image: node:20-bookworm
     working_dir: /srv/apps/indexer
-    command: >
-      bash -lc "
-      bun install &&
-      bun run build &&
-      bun run start
-      "
+    # Install pnpm explicitly (avoid corepack reading bun packageManager), build, run
+    command: ["sh", "-lc", "npm i -g pnpm@9 && pnpm i --frozen-lockfile=false && pnpm run build && node dist/index.js"]
     restart: unless-stopped
     networks: [chaingraph]
     # Bound container logs to prevent disk growth
@@ -100,13 +96,17 @@ services:
       - db
       - hasura
     env_file:
-      - ../.env
+      - ./../.env
     environment:
-      # DB where the indexer writes chain data
+      # Map envs expected by indexer config
+      DATABASE_URL: ${PG_DATABASE_URL}
+      WS_URL: ${SHIP_WS_URL}
+      WS_URL_BACKUP: ${SHIP_WS_URL_BACKUP}
+      RPC_URL: ${RPC_URL:-http://localhost:8888}
+      RPC_URL_BACKUP: ${RPC_URL_BACKUP}
+      # Keep other envs available in case they are used elsewhere
       PG_DATABASE_URL: ${PG_DATABASE_URL}
-      # SHiP websocket endpoint of your nodeos (ws:// or wss://)
       SHIP_WS_URL: ${SHIP_WS_URL}
-      # Chain info & indexing params (adjust to your network)
       CHAIN_ID: ${CHAIN_ID}
       INDEX_FROM_BLOCK: ${INDEX_FROM_BLOCK:-0}
       # Increase Node.js heap to avoid OOM during heavy indexing

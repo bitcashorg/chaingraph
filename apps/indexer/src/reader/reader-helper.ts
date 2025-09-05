@@ -4,7 +4,7 @@ import type {
 	EosioReaderTableRowFilter,
 	ShipTableDeltaName,
 } from "@blockmatic/eosio-ship-reader";
-import { rpc } from "../lib/eosio";
+import { rpcCall } from "../lib/eosio";
 import { logger } from "../lib/logger";
 import type { MappingsReader } from "../mappings";
 import type {
@@ -84,14 +84,13 @@ export const createShipReaderDataHelper = async (
 	abis = new Map();
 	const contracts = whitelistReader.whitelist.map(({ contract }) => contract);
 	const abisArr = await Promise.all(
-		contracts.map((c) => {
-			try {
-				return rpc.v1.chain.get_abi(c);
-			} catch (error) {
+		contracts.map((c) =>
+			rpcCall((client) => client.v1.chain.get_abi(c)).catch((error) => {
 				console.error("Error getting abi", error);
 				logger.info("Failed contract ABI -> ", c);
-			}
-		}),
+				return undefined;
+			}),
+		),
 	);
 	for (const abiEntry of abisArr) {
 		if (abiEntry) {
