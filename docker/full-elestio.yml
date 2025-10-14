@@ -115,3 +115,33 @@ services:
     volumes:
       - ../:/srv
       - ../.env:/srv/apps/indexer/.env:ro
+
+  mappings:
+    # One-shot job to apply manifests/mappings internally (no external DB access)
+    image: oven/bun:1.1.13
+    profiles: ["mappings"]
+    working_dir: /srv/packages/mappings
+    depends_on:
+      db:
+        condition: service_healthy
+      hasura:
+        condition: service_healthy
+    restart: "no"
+    networks: [chaingraph]
+    logging:
+      driver: local
+      options:
+        max-size: "10m"
+        max-file: "3"
+    env_file:
+      - ./../.env
+    environment:
+      # Use internal service hostname to reach Postgres
+      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+    volumes:
+      - ../:/srv
+    command: >
+      sh -lc "cd /srv && bun install &&
+      cd /srv/packages/mappings &&
+      bun ./scripts/manifest bitcash &&
+      bun ./scripts/mappings l1 delphioracle"

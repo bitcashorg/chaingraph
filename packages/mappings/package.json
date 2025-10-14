@@ -9,6 +9,7 @@
 	"scripts": {
 		"mappings": "env-cmd bun ./scripts/mappings",
 		"manifest": "env-cmd bun ./scripts/manifest",
+		"validate": "env-cmd bun ./scripts/validate",
 		"lint": "biome check ."
 	},
 	"devDependencies": {
