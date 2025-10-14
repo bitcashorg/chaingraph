@@ -39,7 +39,7 @@ const missingParam = (param: string) => {
 	process.exit(1);
 };
 
-if (require.main === module) {
+if (import.meta.main) {
 	(async () => {
 		try {
 			const chain = process.argv[2];
